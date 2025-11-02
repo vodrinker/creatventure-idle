@@ -1,0 +1,10 @@
+.map-row {
+    flex-grow: 1;
+    flex-direction: row;
+}
+
+.map-row > TemplateContainer {
+    flex-grow: 1;
+    flex-basis: 0;
+    margin: 1px;
+}

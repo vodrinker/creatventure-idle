@@ -1,0 +1,58 @@
+﻿/* W pliku: MainScreen.uss */
+
+#TopBar {
+    height: 50px;
+    background-color: rgb(30, 30, 30);
+    align-items: center;
+    padding-left: 20px;
+    padding-right: 20px;
+    max-height: 50px;
+}
+
+#MoneyLabel {
+    font-size: 20px;
+    color: white;
+}
+
+/* * 1. Styl dla #ContentContainer (klasa .content-container)
+ * Musi wypełnić całe wolne miejsce.
+ */
+.content-container {
+    flex-grow: 1;
+    width: 100%;
+    /* Usuwamy justify-content stąd, bo jego dziecko (TemplateContainer) ma rosnąć */
+}
+
+/* * 2. Styl dla TemplateContainer, który jest DZIECKIEM #ContentContainer
+ * i trzyma siatkę. On też musi wypełnić miejsce ORAZ centrować siatkę.
+ */
+.content-container > TemplateContainer {
+    flex-grow: 1;
+    width: 100%;
+    
+    /* TO SĄ KLUCZOWE LINIE: Centrują siatkę (#GridContainer) wewnątrz */
+    justify-content: center; /* Centrowanie w pionie */
+    align-items: center;     /* Centrowanie w poziomie */
+}
+
+
+#MenuContainer {
+    height: 100px;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#MenuContainer > Button {
+    min-width: 100px;
+    height: 50px;
+}
+
+#PopupHost {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    display: none;
+}

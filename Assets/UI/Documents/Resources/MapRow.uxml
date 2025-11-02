@@ -1,0 +1,13 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="MapTile" src="project://database/Assets/UI/Documents/Resources/MapTile.uxml?fileID=9197481963319205126&amp;guid=07c76e24b1fb67849a45125a2cccbd2c&amp;type=3#MapTile" />
+    <Style src="project://database/Assets/UI/Styles/MapRow.uss?fileID=7433441132597879392&amp;guid=a1a1e57d2e4085548bd85b761a8d4388&amp;type=3#MapRow" />
+    <ui:VisualElement name="RowRoot" class="map-row" style="flex-grow: 1; flex-direction: row;">
+        <ui:Instance template="MapTile" />
+        <ui:Instance template="MapTile" />
+        <ui:Instance template="MapTile" />
+        <ui:Instance template="MapTile" />
+        <ui:Instance template="MapTile" />
+        <ui:Instance template="MapTile" />
+        <ui:Instance template="MapTile" />
+    </ui:VisualElement>
+</ui:UXML>

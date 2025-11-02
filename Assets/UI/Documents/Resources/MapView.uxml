@@ -1,0 +1,17 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="MapRow" src="project://database/Assets/UI/Documents/Resources/MapRow.uxml?fileID=9197481963319205126&amp;guid=241583a0f14a93d4bb276d5dd23ca65e&amp;type=3#MapRow" />
+    <Style src="project://database/Assets/UI/Styles/MapView.uss?fileID=7433441132597879392&amp;guid=5b1ad6fe8066b804f8ae827681d7d495&amp;type=3#MapView" />
+    <AspectRatioBox name="GridContainer" ratio-x="7" ratio-y="11" fit-to-parent="true" class="map-grid">
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+        <ui:Instance template="MapRow" />
+    </AspectRatioBox>
+</ui:UXML>

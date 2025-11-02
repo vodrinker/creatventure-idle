@@ -1,0 +1,27 @@
+.popup-content {
+    background-color: rgb(51, 51, 51);
+    padding: 20px;
+    border-radius: 10px;
+    align-items: center;
+    min-width: 250px;
+}
+
+.popup-image {
+    width: 200px;
+    height: 200px;
+    background-color: rgb(85, 85, 85);
+}
+
+.popup-title {
+    -unity-text-align: middle-center;
+    font-size: 24px;
+    color: white;
+    white-space: normal;
+    margin-bottom: 15px;
+}
+
+.buy-button {
+    margin-top: 15px;
+    height: 40px;
+    width: 120px;
+}

@@ -1,0 +1,28 @@
+﻿/* Zastąp swój obecny styl .map-tile tym: */
+.map-tile {
+    /* Mówi kafelkowi (AspectRatioBox), aby zajął 100%
+       szerokości swojego rodzica (TemplateContainer) */
+    width: 100%;
+    
+    /* Niezbędne, aby .map-tile__icon mógł się pozycjonować */
+    position: relative;
+
+    /* * --- USUNIĘTE ---
+     * flex-grow: 1;
+     * flex-basis: 0;
+     * flex-shrink: 1; 
+     * margin: 1px;
+     * (Te style przeniesiemy do MapRow.uss, gdzie będą sterować
+     * kontenerem, który trzyma ten kafelek)
+     */
+}
+
+/* Ten styl jest POPRAWNY i zostaje bez zmian */
+.map-tile__icon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 10px;
+}

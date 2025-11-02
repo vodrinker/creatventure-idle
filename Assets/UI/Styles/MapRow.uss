@@ -1,0 +1,13 @@
+﻿/*
+ * Mówi każdemu TemplateContainer, który jest
+ * BEZPOŚREDNIM dzieckiem .map-row,
+ * aby rósł i dzielił się miejscem.
+ */
+.map-row > TemplateContainer {
+    flex-grow: 1;
+    flex-basis: 0;
+    flex-shrink: 1;
+    
+    /* Przenosimy też margines z kafelka tutaj */
+    margin: 1px;
+}

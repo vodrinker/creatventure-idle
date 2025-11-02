@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Styles/MapTilePopup.uss?fileID=7433441132597879392&amp;guid=d313026412ab8bc498d3795ab221d8d8&amp;type=3#MapTilePopup" />
+    <ui:VisualElement name="PopupContent" class="popup-content">
+        <ui:Label text="Placeholder Title" name="PopupTitle" class="popup-title" />
+        <ui:VisualElement name="PopupImage" class="popup-image" />
+        <ui:Button text="Buy node (100)" name="BuyButton" class="buy-button" />
+    </ui:VisualElement>
+</ui:UXML>
