@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Styles/CreaturesView.uss" />
+    <ui:VisualElement name="CreatureListItem" class="creature-list-item">
+        <ui:VisualElement name="CreatureIcon" class="creature-icon" />
+        <ui:VisualElement name="CreatureInfo" class="creature-info">
+            <ui:Label text="Creature Name" name="CreatureName" class="creature-name" />
+            <ui:Label text="Lv. 1" name="CreatureLevel" class="creature-level" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

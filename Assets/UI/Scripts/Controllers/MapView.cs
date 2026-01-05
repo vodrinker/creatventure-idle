@@ -6,24 +6,37 @@ public class MapView
 {
     private VisualElement gridContainer;
     private UIManager uiManager;
+    private GameManager gameManager;
 
     // Słownik przechowuje referencje do już istniejących kafelków
     private Dictionary<Vector2Int, VisualElement> tileElements = new Dictionary<Vector2Int, VisualElement>();
 
-    public MapView(VisualElement rootElement, UIManager uiManager)
+    public MapView(VisualElement rootElement, UIManager uiManager, GameManager gameManager)
     {
         this.uiManager = uiManager;
+        this.gameManager = gameManager;
 
         // 1. Znajdź główny kontener siatki (który jest w UXML)
         gridContainer = rootElement.Q<VisualElement>("GridContainer");
 
         // 2. Nie czyść go, nie dodawaj klas - on już istnieje i jest gotowy
 
-        // 3. Wypełnij siatkę danymi
-        BindMapData(GameManager.Instance.Map);
+        if (this.gameManager != null)
+        {
+            // 3. Wypełnij siatkę danymi
+            BindMapData(this.gameManager.Map);
 
-        // 4. Zarejestruj się na zmiany (tak jak wcześniej)
-        GameManager.Instance.OnNodeStateChanged += UpdateNodeVisuals;
+            // 4. Zarejestruj się na zmiany
+            this.gameManager.OnNodeUpdated += UpdateNodeVisuals;
+        }
+    }
+
+    public void UnregisterCallbacks()
+    {
+        if (gameManager != null)
+        {
+            gameManager.OnNodeUpdated -= UpdateNodeVisuals;
+        }
     }
 
     private void BindMapData(Dictionary<Vector2Int, NodeData> mapData)
@@ -62,7 +75,7 @@ public class MapView
             for (int x = -xOffset; x <= xOffset; x++)
             {
                 var coordinates = new Vector2Int(x, y);
-                var nodeData = GameManager.Instance.GetNodeAt(coordinates);
+                var nodeData = gameManager.GetNodeAt(coordinates);
 
                 // Mapowanie x (-3..3) na indeks listy (0..6)
                 int tileIndex = x + xOffset;
@@ -87,22 +100,55 @@ public class MapView
 
         var tileElement = tileElements[nodeData.Coordinates];
         var tileIcon = tileElement.Q<VisualElement>("TileIcon");
+        var enemyHPBar = tileElement.Q<VisualElement>("EnemyHPBar");
+        var enemyHPFill = tileElement.Q<VisualElement>("EnemyHPFill");
+        var playerHPBar = tileElement.Q<VisualElement>("PlayerHPBar");
+        var playerHPFill = tileElement.Q<VisualElement>("PlayerHPFill");
 
         if (nodeData.isVisible)
         {
-            tileIcon.style.backgroundImage = new StyleBackground(nodeData.Definition.nodeSprite);
+            tileIcon.style.backgroundImage = new StyleBackground(nodeData.NodeSprite);
             tileElement.pickingMode = PickingMode.Position;
+
+            if (nodeData.isOwned && nodeData.AssignedCreature != null)
+            {
+                // Logic for Player HP Bar
+                playerHPBar.style.display = DisplayStyle.Flex;
+                float playerHPPercent = nodeData.AssignedCreature.CurrentHealth / nodeData.AssignedCreature.MaxHealth * 100f;
+                playerHPFill.style.width = new Length(playerHPPercent, LengthUnit.Percent);
+
+                // Logic for Enemy HP Bar - show only if fighting active enemy
+                if (nodeData.Enemy != null && nodeData.Enemy.IsAlive && !nodeData.IsHealing)
+                {
+                    enemyHPBar.style.display = DisplayStyle.Flex;
+                    float enemyHPPercent = nodeData.Enemy.CurrentHealth / nodeData.Enemy.MaxHealth * 100f;
+                    enemyHPFill.style.width = new Length(enemyHPPercent, LengthUnit.Percent);
+                }
+                else
+                {
+                    enemyHPBar.style.display = DisplayStyle.None;
+                }
+            }
+            else
+            {
+                playerHPBar.style.display = DisplayStyle.None;
+                enemyHPBar.style.display = DisplayStyle.None;
+            }
         }
         else
         {
-            tileIcon.style.backgroundImage = new StyleBackground(GameManager.Instance.GetLockedNodeSprite());
+            tileIcon.style.backgroundImage = new StyleBackground(gameManager.GetLockedNodeSprite());
             tileElement.pickingMode = PickingMode.Ignore;
+            // Ensure bars are hidden for locked/invisible nodes
+            if (playerHPBar != null) playerHPBar.style.display = DisplayStyle.None;
+            if (enemyHPBar != null) enemyHPBar.style.display = DisplayStyle.None;
         }
     }
 
     private void OnTileClicked(Vector2Int coordinates)
     {
-        NodeData nodeData = GameManager.Instance.GetNodeAt(coordinates);
+        if (gameManager == null) return;
+        NodeData nodeData = gameManager.GetNodeAt(coordinates);
         if (nodeData != null && nodeData.isVisible)
         {
             uiManager.OpenMapTilePopup(nodeData);

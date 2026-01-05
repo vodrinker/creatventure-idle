@@ -184,8 +184,9 @@ GameObject:
   m_Component:
   - component: {fileID: 798415379}
   - component: {fileID: 798415378}
+  - component: {fileID: 798415380}
   m_Layer: 0
-  m_Name: UIManager
+  m_Name: Managers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -219,6 +220,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &798415380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 798415377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae377067e53a4694e8f412230ced0a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  mapWidth: 7
+  mapHeight: 11
+  nodeDefinitionPool:
+  - {fileID: 11400000, guid: 109c7aa4c4605bd49873b6418cc723f8, type: 2}
+  - {fileID: 11400000, guid: 28019e14c874dad45b6aa34716031ebb, type: 2}
+  - {fileID: 11400000, guid: 18e232418caf3cd46b37dd59e01b2ba3, type: 2}
+  centerNodeDefinition: {fileID: 11400000, guid: 109c7aa4c4605bd49873b6418cc723f8, type: 2}
+  lockedNodeSprite: {fileID: 9169279571100635141, guid: 67263b87ea7044d49bc23fbf2e7f6a25, type: 3}
+  debugCreatureSO: {fileID: 11400000, guid: bc1600b17449119428d20c5997f768e3, type: 2}
+  debugCreatureLevel: 2
 --- !u!1 &1656825787
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,57 +379,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2041768808
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2041768810}
-  - component: {fileID: 2041768809}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2041768809
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2041768808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae377067e53a4694e8f412230ced0a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  mapWidth: 7
-  mapHeight: 11
-  nodeDefinitionPool:
-  - {fileID: 11400000, guid: 109c7aa4c4605bd49873b6418cc723f8, type: 2}
-  - {fileID: 11400000, guid: 28019e14c874dad45b6aa34716031ebb, type: 2}
-  - {fileID: 11400000, guid: 18e232418caf3cd46b37dd59e01b2ba3, type: 2}
-  lockedNodeSprite: {fileID: 9169279571100635141, guid: 67263b87ea7044d49bc23fbf2e7f6a25, type: 3}
---- !u!4 &2041768810
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2041768808}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -414,4 +386,3 @@ SceneRoots:
   - {fileID: 460350893}
   - {fileID: 1656825791}
   - {fileID: 798415379}
-  - {fileID: 2041768810}

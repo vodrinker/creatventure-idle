@@ -8,6 +8,7 @@
             <ui:Button text="Techs" name="MenuButton_TechTree" />
             <ui:Button text="Map" name="MenuButton_Map" />
             <ui:Button text="Creatures" name="MenuButton_Creatures" />
+            <ui:Button text="Items" name="MenuButton_Items" />
         </ui:VisualElement>
         <ui:VisualElement name="PopupHost" style="flex-grow: 1;" />
     </ui:VisualElement>

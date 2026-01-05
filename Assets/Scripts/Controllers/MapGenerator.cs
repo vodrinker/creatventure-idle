@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class MapGenerator
 {
-    public Dictionary<Vector2Int, NodeData> GenerateMap(int width, int height, NodeDefinitionSO[] nodePool)
+    public Dictionary<Vector2Int, NodeData> GenerateMap(int width, int height, NodeDefinitionSO[] nodePool, NodeDefinitionSO centerNodeDefinition)
     {
         var mapData = new Dictionary<Vector2Int, NodeData>();
         if (nodePool == null || nodePool.Length == 0)
@@ -20,8 +20,22 @@ public class MapGenerator
             for (int x = -xOffset; x <= xOffset; x++)
             {
                 var coordinates = new Vector2Int(x, y);
-                var randomDefinition = nodePool[Random.Range(0, nodePool.Length)];
-                var newNode = new NodeData(coordinates, randomDefinition);
+                NodeDefinitionSO definition;
+
+                if (x == 0 && y == 0)
+                {
+                    definition = centerNodeDefinition;
+                }
+                else
+                {
+                    definition = nodePool[Random.Range(0, nodePool.Length)];
+                }
+
+                var newNode = new NodeData(coordinates, definition);
+
+                int distance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(y));
+                newNode.baseCost = distance * 100;
+
                 mapData.Add(coordinates, newNode);
             }
         }

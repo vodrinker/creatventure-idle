@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Styles/CreaturesView.uss" />
+    <Style src="project://database/Assets/UI/Styles/MapTilePopup.uss" />
+    <ui:VisualElement name="CreaturePickerRoot" class="popup-content creature-picker-popup">
+        <ui:Label text="Select Creature" name="PopupTitle" class="popup-title" />
+        <ui:ScrollView name="CreaturePickerScroll" class="creature-picker-scroll">
+            <ui:VisualElement name="CreaturePickerList" class="creature-picker-list" />
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,9 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Styles/CreaturesView.uss" />
+    <ui:VisualElement name="CreaturesViewRoot" class="creatures-view-root">
+        <ui:Label text="Creatures" name="ViewTitle" class="view-title" />
+        <ui:ScrollView name="CreaturesScrollView" class="creatures-scroll-view">
+            <ui:VisualElement name="CreaturesContainer" class="creatures-container" />
+        </ui:ScrollView>
+    </ui:VisualElement>
+</ui:UXML>

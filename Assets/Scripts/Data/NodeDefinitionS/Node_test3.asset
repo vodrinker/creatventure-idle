@@ -14,3 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NodeDefinitionSO
   nodeName: Testowy node 3
   nodeSprite: {fileID: -8139558977763649760, guid: 7f1e825adb024e541b0ae2a66469d570, type: 3}
+  productionItems:
+  - item: {fileID: 11400000, guid: 921ca2c8caba0be439a98f3cbd9e8e98, type: 2}
+    baseAmount: 1

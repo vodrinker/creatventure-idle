@@ -1,0 +1,19 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Styles/ItemsView.uss" />
+    <ui:VisualElement class="items-view-root">
+        <ui:VisualElement name="TableHeader" class="items-table-header">
+            <ui:Label text="Item" class="header-cell item-name-col" />
+            <ui:Label text="Qty" class="header-cell item-qty-col" />
+            <ui:Label text="Value" class="header-cell item-value-col" />
+            <ui:Label text="Action" class="header-cell item-action-col" />
+        </ui:VisualElement>
+        <ui:ScrollView name="ItemsScroll" class="items-scroll">
+            <ui:VisualElement name="ItemsTable" class="items-table" />
+        </ui:ScrollView>
+        <ui:VisualElement name="SellAllRow" class="sell-all-row">
+            <ui:Label text="Total:" class="sell-all-label" />
+            <ui:Label text="0$" name="SellAllValue" class="sell-all-value" />
+            <ui:Button text="Sell All" name="SellAllButton" class="sell-all-button" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

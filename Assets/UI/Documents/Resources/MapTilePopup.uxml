@@ -1,8 +1,49 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Styles/MapTilePopup.uss?fileID=7433441132597879392&amp;guid=d313026412ab8bc498d3795ab221d8d8&amp;type=3#MapTilePopup" />
+    <Style src="project://database/Assets/UI/Styles/CreaturesView.uss" />
     <ui:VisualElement name="PopupContent" class="popup-content">
         <ui:Label text="Placeholder Title" name="PopupTitle" class="popup-title" />
         <ui:VisualElement name="PopupImage" class="popup-image" />
+        
+        <ui:VisualElement name="EconomyContent" class="tab-content">
+            <ui:VisualElement name="ProductionSection" class="node-production-section">
+                <ui:Label text="Production" name="ProductionLabel" class="section-label" />
+                <ui:VisualElement name="ProductionList" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        
+        <ui:VisualElement name="BattleContent" class="tab-content" style="display: none;">
+            <ui:VisualElement name="EnemySection" class="battle-section enemy-section">
+                <ui:Label text="Enemy Creature" name="EnemySectionLabel" class="section-label enemy-label" />
+                <ui:Label text="Enemy Lv. 1" name="EnemyInfo" class="creature-battle-info enemy-info" />
+                <ui:Label text="HP: 10/10" name="EnemyHP" class="creature-hp enemy-hp" />
+                <ui:VisualElement name="EnemyHPBarContainer" class="hp-bar-container enemy-hp-bar-container">
+                    <ui:VisualElement name="EnemyHPBar" class="battle-hp-fill enemy-hp-bar" />
+                </ui:VisualElement>
+                <ui:VisualElement name="EnemyImage" class="battle-creature-image" />
+            </ui:VisualElement>
+            
+            <ui:Label text="VS" name="VsLabel" class="vs-label" />
+            
+            <ui:VisualElement name="PlayerSection" class="battle-section player-section">
+                <ui:Label text="Your Creature" name="PlayerSectionLabel" class="section-label player-label" />
+                <ui:Label text="No creature" name="PlayerInfo" class="creature-battle-info player-info" />
+                <ui:Label text="HP: -/-" name="PlayerHP" class="creature-hp player-hp" />
+                <ui:VisualElement name="PlayerHPBarContainer" class="hp-bar-container player-hp-bar-container">
+                    <ui:VisualElement name="PlayerHPBar" class="battle-hp-fill player-hp-bar" />
+                </ui:VisualElement>
+                <ui:VisualElement name="PlayerImage" class="battle-creature-image" />
+            </ui:VisualElement>
+            
+            <ui:Button text="Assign Creature" name="AssignCreatureButton" class="assign-creature-button" />
+            <ui:Button text="Remove Creature" name="RemoveCreatureButton" class="remove-creature-button" />
+        </ui:VisualElement>
+        
         <ui:Button text="Buy node (100)" name="BuyButton" class="buy-button" />
+        
+        <ui:VisualElement name="TabBar" class="tab-bar">
+            <ui:Button text="Economy" name="EconomyTab" class="tab-button tab-active" />
+            <ui:Button text="Battle" name="BattleTab" class="tab-button" />
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

@@ -1,5 +1,3 @@
-﻿/* W pliku: MainScreen.uss */
-
 #TopBar {
     height: 50px;
     background-color: rgb(30, 30, 30);
@@ -14,27 +12,17 @@
     color: white;
 }
 
-/* * 1. Styl dla #ContentContainer (klasa .content-container)
- * Musi wypełnić całe wolne miejsce.
- */
 .content-container {
     flex-grow: 1;
     width: 100%;
-    /* Usuwamy justify-content stąd, bo jego dziecko (TemplateContainer) ma rosnąć */
 }
 
-/* * 2. Styl dla TemplateContainer, który jest DZIECKIEM #ContentContainer
- * i trzyma siatkę. On też musi wypełnić miejsce ORAZ centrować siatkę.
- */
 .content-container > TemplateContainer {
     flex-grow: 1;
     width: 100%;
-    
-    /* TO SĄ KLUCZOWE LINIE: Centrują siatkę (#GridContainer) wewnątrz */
-    justify-content: center; /* Centrowanie w pionie */
-    align-items: center;     /* Centrowanie w poziomie */
+    justify-content: center;
+    align-items: center;
 }
-
 
 #MenuContainer {
     height: 100px;
@@ -44,7 +32,6 @@
 }
 
 #MenuContainer > Button {
-    min-width: 100px;
     height: 50px;
 }
 
@@ -55,4 +42,13 @@
     justify-content: center;
     align-items: center;
     display: none;
+}
+
+Button {
+    border-radius: 8px;
+    color: rgb(204, 255, 0);
+    background-color: rgb(15, 15, 15);
+}
+
+.unity-text-element {
 }

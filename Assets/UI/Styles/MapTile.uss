@@ -26,3 +26,34 @@
     bottom: 0;
     border-radius: 10px;
 }
+
+.map-tile-hp-bar {
+    position: absolute;
+    left: 10%;
+    width: 80%;
+    height: 6px;
+    background-color: rgba(30, 30, 30, 0.8);
+    border-radius: 3px;
+    display: none; /* Initially hidden */
+}
+
+.map-tile-hp-bar__fill {
+    height: 100%;
+    border-radius: 3px;
+}
+
+.map-tile-hp-bar--enemy {
+    top: 5px;
+}
+
+.map-tile-hp-bar--player {
+    bottom: 5px;
+}
+
+.hp-fill--enemy {
+    background-color: #CC4444; 
+}
+
+.hp-fill--player {
+    background-color: #44CC44;
+}

@@ -1,0 +1,17 @@
+using System;
+using System.Collections.Generic;
+
+[Serializable]
+public class NodeSave
+{
+    public int x;
+    public int y;
+    public bool isVisible;
+    public bool isOwned;
+    public int productionLevel;
+    public int adventureLevel;
+    public float baseCost;
+    public int upgradeCost;
+    public List<ProductionProgressSave> productionProgresses;
+    public int assignedCreatureIndex = -1;
+}

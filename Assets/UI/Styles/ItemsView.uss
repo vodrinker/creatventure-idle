@@ -1,0 +1,139 @@
+.items-view-root {
+    flex-grow: 1;
+    padding: 10px;
+    background-color: rgba(30, 30, 40, 0.95);
+}
+
+.items-table-header {
+    flex-direction: row;
+    background-color: rgba(50, 50, 70, 0.9);
+    padding: 8px 10px 8px 15px;
+    border-bottom-width: 2px;
+    border-bottom-color: #FFD700;
+}
+
+.header-cell {
+    color: #FFD700;
+    -unity-font-style: bold;
+    font-size: 14px;
+    -unity-text-align: middle-center;
+}
+
+.item-name-col {
+    flex-grow: 2;
+    min-width: 100px;
+    -unity-text-align: middle-left;
+}
+
+.item-qty-col {
+    width: 50px;
+    -unity-text-align: middle-center;
+}
+
+.item-value-col {
+    width: 70px;
+    -unity-text-align: middle-center;
+}
+
+.item-action-col {
+    width: 80px;
+    -unity-text-align: middle-center;
+}
+
+.items-scroll {
+    flex-grow: 1;
+}
+
+.items-table {
+    flex-direction: column;
+}
+
+.item-row {
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 10px 6px 15px;
+    background-color: rgba(40, 40, 55, 0.7);
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(100, 100, 120, 0.5);
+}
+
+.item-row:hover {
+    background-color: rgba(60, 60, 80, 0.8);
+}
+
+.item-name {
+    flex-grow: 2;
+    min-width: 100px;
+    color: #FFFFFF;
+    font-size: 14px;
+    -unity-text-align: middle-left;
+    overflow: hidden;
+}
+
+.item-qty {
+    width: 50px;
+    color: #AAFFAA;
+    font-size: 14px;
+    -unity-text-align: middle-center;
+}
+
+.item-value {
+    width: 70px;
+    color: #FFDD88;
+    font-size: 14px;
+    -unity-text-align: middle-center;
+}
+
+.item-sell-button {
+    width: 70px;
+    height: 24px;
+    background-color: rgba(80, 120, 80, 0.8);
+    color: #AAFFAA;
+    border-radius: 4px;
+    border-width: 0;
+    font-size: 12px;
+}
+
+.item-sell-button:hover {
+    background-color: rgba(100, 150, 100, 0.9);
+}
+
+.sell-all-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 12px 10px;
+    margin-top: 10px;
+    background-color: rgba(60, 60, 80, 0.9);
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: #FFD700;
+}
+
+.sell-all-label {
+    color: #FFFFFF;
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-right: 10px;
+}
+
+.sell-all-value {
+    color: #FFD700;
+    font-size: 18px;
+    -unity-font-style: bold;
+    margin-right: 15px;
+}
+
+.sell-all-button {
+    padding: 8px 20px;
+    background-color: rgba(200, 150, 50, 0.9);
+    color: #FFFFFF;
+    border-radius: 6px;
+    border-width: 0;
+    font-size: 14px;
+    -unity-font-style: bold;
+}
+
+.sell-all-button:hover {
+    background-color: rgba(220, 180, 80, 1);
+}
