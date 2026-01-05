@@ -69,6 +69,15 @@ public class GameManager : MonoBehaviour
             // create a PlayerData instance, then load saved values
             Player = new PlayerData();
             LoadGame();
+
+            // Spawn enemies for already owned nodes if missing (because enemies are not saved)
+            foreach (var node in Map.Values)
+            {
+                if (node.isOwned && node.Enemy == null)
+                {
+                    SpawnEnemyForNode(node);
+                }
+            }
         }
         else
         {

@@ -110,6 +110,15 @@ public class MapView
             tileIcon.style.backgroundImage = new StyleBackground(nodeData.NodeSprite);
             tileElement.pickingMode = PickingMode.Position;
 
+            if (nodeData.isOwned)
+            {
+                tileElement.AddToClassList("map-tile--owned");
+            }
+            else
+            {
+                tileElement.RemoveFromClassList("map-tile--owned");
+            }
+
             if (nodeData.isOwned && nodeData.AssignedCreature != null)
             {
                 // Logic for Player HP Bar

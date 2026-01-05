@@ -7,14 +7,14 @@
     /* Niezbędne, aby .map-tile__icon mógł się pozycjonować */
     position: relative;
 
-    /* * --- USUNIĘTE ---
-     * flex-grow: 1;
-     * flex-basis: 0;
-     * flex-shrink: 1; 
-     * margin: 1px;
-     * (Te style przeniesiemy do MapRow.uss, gdzie będą sterować
+    /* (Te style przeniesiemy do MapRow.uss, gdzie będą sterować
      * kontenerem, który trzyma ten kafelek)
      */
+}
+
+.map-tile--owned {
+    border-width: 2px;
+    border-color: #44CC44;
 }
 
 /* Ten styl jest POPRAWNY i zostaje bez zmian */
@@ -31,19 +31,19 @@
     position: absolute;
     left: 10%;
     width: 80%;
-    height: 6px;
+    height: 4px; /* Reduced from 6px */
     background-color: rgba(30, 30, 30, 0.8);
-    border-radius: 3px;
+    border-radius: 2px;
     display: none; /* Initially hidden */
 }
 
 .map-tile-hp-bar__fill {
     height: 100%;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 
 .map-tile-hp-bar--enemy {
-    top: 5px;
+    bottom: 11px; /* Moved to bottom, just above player bar */
 }
 
 .map-tile-hp-bar--player {

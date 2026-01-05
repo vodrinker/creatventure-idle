@@ -306,6 +306,7 @@ public class UIManager : MonoBehaviour
             battleTab.RemoveFromClassList("tab-active");
             economyContent.style.display = DisplayStyle.Flex;
             battleContent.style.display = DisplayStyle.None;
+            imageElement.style.display = DisplayStyle.Flex; // Show image in economy
         };
 
         battleTab.clicked += () =>
@@ -314,6 +315,7 @@ public class UIManager : MonoBehaviour
             economyTab.RemoveFromClassList("tab-active");
             battleContent.style.display = DisplayStyle.Flex;
             economyContent.style.display = DisplayStyle.None;
+            imageElement.style.display = DisplayStyle.None; // Hide image in battle
         };
 
         productionList.Clear();
@@ -378,7 +380,8 @@ public class UIManager : MonoBehaviour
                         bool success = gameManager.TryUnlockNode(nodeData);
                         if (success)
                         {
-                            CloseCurrentPopup();
+                            CloseCurrentPopup(); // Close the "buy" popup first
+                            OpenMapTilePopup(nodeData); // Open the "owned" popup
                         }
                     }
                 };
@@ -405,7 +408,12 @@ public class UIManager : MonoBehaviour
             enemyHP.text = $"HP: {nodeData.Enemy.CurrentHealth:F0}/{nodeData.Enemy.MaxHealth:F0}";
             if (nodeData.Enemy.Definition.sprite != null)
             {
+                enemyImage.style.display = DisplayStyle.Flex;
                 enemyImage.style.backgroundImage = new StyleBackground(nodeData.Enemy.Definition.sprite);
+            }
+            else
+            {
+                enemyImage.style.display = DisplayStyle.None;
             }
             float enemyHPPercent = nodeData.Enemy.CurrentHealth / nodeData.Enemy.MaxHealth * 100f;
             enemyHPBar.style.width = new Length(enemyHPPercent, LengthUnit.Percent);
@@ -425,7 +433,12 @@ public class UIManager : MonoBehaviour
             playerHP.text = $"HP: {creature.CurrentHealth:F0}/{creature.MaxHealth:F0}";
             if (creature.Definition.sprite != null)
             {
+                playerImage.style.display = DisplayStyle.Flex;
                 playerImage.style.backgroundImage = new StyleBackground(creature.Definition.sprite);
+            }
+            else
+            {
+                playerImage.style.display = DisplayStyle.None;
             }
             float playerHPPercent = creature.CurrentHealth / creature.MaxHealth * 100f;
             playerHPBar.style.width = new Length(playerHPPercent, LengthUnit.Percent);
