@@ -24,7 +24,12 @@ public class NodeData
     public Creature Enemy { get; set; }
     public float BattleTimer { get; set; }
     public bool IsHealing { get; set; }
-    public int EnemyLevel => GetDistanceTo(Vector2Int.zero) + 1;
+
+    public int MaxUnlockedAdventureLevel { get; set; }
+    public int AdventureProgress { get; set; }
+
+    // Enemy Level = Distance + 1 + Current Selected Level (adventureLevel)
+    public int EnemyLevel => GetDistanceTo(Vector2Int.zero) + 1 + adventureLevel;
 
     public NodeData(Vector2Int coordinates, NodeDefinitionSO definition)
     {

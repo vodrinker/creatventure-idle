@@ -13,8 +13,9 @@
 }
 
 .map-tile--owned {
-    border-width: 2px;
+    border-width: 1px;
     border-color: #44CC44;
+    border-radius: 4px;
 }
 
 /* Ten styl jest POPRAWNY i zostaje bez zmian */

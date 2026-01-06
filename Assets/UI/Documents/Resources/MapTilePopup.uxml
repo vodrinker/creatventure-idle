@@ -23,7 +23,7 @@
                 <ui:VisualElement name="EnemyImage" class="battle-creature-image" />
             </ui:VisualElement>
             
-            <ui:Label text="VS" name="VsLabel" class="vs-label" />
+
             
             <ui:VisualElement name="PlayerSection" class="battle-section player-section">
                 <ui:Label text="Your Creature" name="PlayerSectionLabel" class="section-label player-label" />
@@ -37,6 +37,15 @@
             
             <ui:Button text="Assign Creature" name="AssignCreatureButton" class="assign-creature-button" />
             <ui:Button text="Remove Creature" name="RemoveCreatureButton" class="remove-creature-button" />
+            
+            <ui:VisualElement name="ProgressSection" class="progress-section">
+                <ui:Label text="Progress: 1/10" name="ProgressLabel" class="progress-label" />
+                <ui:VisualElement class="level-controls">
+                    <ui:Button text="-" name="LevelDownBtn" class="level-button" />
+                    <ui:Label text="Lvl: 0" name="LevelLabel" class="level-display" />
+                    <ui:Button text="+" name="LevelUpBtn" class="level-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
         </ui:VisualElement>
         
         <ui:Button text="Buy node (100)" name="BuyButton" class="buy-button" />

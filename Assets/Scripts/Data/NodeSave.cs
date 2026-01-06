@@ -10,6 +10,8 @@ public class NodeSave
     public bool isOwned;
     public int productionLevel;
     public int adventureLevel;
+    public int maxUnlockedAdventureLevel;
+    public int adventureProgress;
     public float baseCost;
     public int upgradeCost;
     public List<ProductionProgressSave> productionProgresses;

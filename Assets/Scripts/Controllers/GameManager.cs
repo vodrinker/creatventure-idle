@@ -137,6 +137,7 @@ public class GameManager : MonoBehaviour
 
             if (!node.Enemy.IsAlive)
             {
+                HandleEnemyDeath(node);
                 continue;
             }
 
@@ -153,20 +154,22 @@ public class GameManager : MonoBehaviour
 
                 if (!node.Enemy.IsAlive)
                 {
-                    int expGain = 10 + node.EnemyLevel * 2;
-                    node.AssignedCreature.Exp += expGain;
-                    node.IsHealing = true;
-                    OnCreaturesUpdated?.Invoke();
+                    HandleEnemyDeath(node);
                 }
-                else if (!node.AssignedCreature.IsAlive)
+                else
                 {
-                    node.IsHealing = true;
+                    OnNodeUpdated?.Invoke(node);
                 }
-
-                OnNodeUpdated?.Invoke(node);
             }
+            else if (!node.AssignedCreature.IsAlive)
+            {
+                node.IsHealing = true;
+            }
+
+            OnNodeUpdated?.Invoke(node);
         }
     }
+
 
     private float CalculateDamage(Creature attacker, Creature defender)
     {
@@ -312,6 +315,8 @@ public class GameManager : MonoBehaviour
             ns.isVisible = n.isVisible;
             ns.productionLevel = n.productionLevel;
             ns.adventureLevel = n.adventureLevel;
+            ns.maxUnlockedAdventureLevel = n.MaxUnlockedAdventureLevel;
+            ns.adventureProgress = n.AdventureProgress;
             ns.baseCost = n.baseCost;
             ns.upgradeCost = n.UpgradeCost;
             ns.productionProgresses = new List<ProductionProgressSave>();
@@ -406,6 +411,10 @@ public class GameManager : MonoBehaviour
                 node.isOwned = ns.isOwned;
                 node.productionLevel = ns.productionLevel;
                 node.adventureLevel = ns.adventureLevel;
+                node.MaxUnlockedAdventureLevel = ns.maxUnlockedAdventureLevel;
+                node.AdventureProgress = ns.adventureProgress;
+                node.adventureLevel = ns.adventureLevel; // Ensure loaded level is set
+                node.adventureLevel = Mathf.Clamp(node.adventureLevel, 0, node.MaxUnlockedAdventureLevel); // Safety clamp
                 node.baseCost = ns.baseCost;
 
                 if (ns.productionProgresses != null && node.productionProgresses != null)
@@ -556,5 +565,29 @@ public class GameManager : MonoBehaviour
     private void OnApplicationQuit()
     {
         SaveGame();
+    }
+    private void HandleEnemyDeath(NodeData node)
+    {
+        if (node.AssignedCreature == null) return;
+
+        int expGain = 10 + node.EnemyLevel * 2;
+        node.AssignedCreature.Exp += expGain;
+
+        // Progress System
+        if (node.adventureLevel == node.MaxUnlockedAdventureLevel)
+        {
+            node.AdventureProgress++;
+            // Target: (level + 1) * 10. E.g. Lvl 0 -> 10 kills. Lvl 1 -> 20 kills.
+            int requiredKills = (node.adventureLevel + 1) * 10;
+            if (node.AdventureProgress >= requiredKills)
+            {
+                node.MaxUnlockedAdventureLevel++;
+                node.AdventureProgress = 0;
+            }
+        }
+
+        node.IsHealing = true;
+        OnCreaturesUpdated?.Invoke();
+        OnNodeUpdated?.Invoke(node);
     }
 }

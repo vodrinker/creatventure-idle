@@ -28,6 +28,9 @@ public class UIManager : MonoBehaviour
 
     private ListView creaturesListView;
     private MapView currentMapView;
+
+    // Flash feedback tracking
+    private Dictionary<VisualElement, Coroutine> activeFlashes = new Dictionary<VisualElement, Coroutine>();
     private bool isShowingItemsView;
 
     private GameManager gameManager;
@@ -288,6 +291,9 @@ public class UIManager : MonoBehaviour
 
         var productionList = popupInstance.Q<VisualElement>("ProductionList");
 
+        var enemySection = popupInstance.Q<VisualElement>("EnemySection");
+        var playerSection = popupInstance.Q<VisualElement>("PlayerSection");
+
         var enemyInfo = popupInstance.Q<Label>("EnemyInfo");
         var enemyHP = popupInstance.Q<Label>("EnemyHP");
         var enemyImage = popupInstance.Q<VisualElement>("EnemyImage");
@@ -296,6 +302,33 @@ public class UIManager : MonoBehaviour
         var playerImage = popupInstance.Q<VisualElement>("PlayerImage");
         var assignCreatureButton = popupInstance.Q<Button>("AssignCreatureButton");
         var removeCreatureButton = popupInstance.Q<Button>("RemoveCreatureButton");
+
+        // Flash Colors
+        Color enemyBase = new Color(120f / 255f, 50f / 255f, 50f / 255f, 0.4f);
+        Color enemyFlash = new Color(180f / 255f, 80f / 255f, 80f / 255f, 0.6f);
+        Color playerBase = new Color(50f / 255f, 100f / 255f, 50f / 255f, 0.4f);
+        Color playerFlash = new Color(80f / 255f, 150f / 255f, 80f / 255f, 0.6f);
+
+        // manual click interaction
+        enemySection.RegisterCallback<ClickEvent>(evt =>
+        {
+            if (nodeData.Enemy != null && nodeData.Enemy.IsAlive)
+            {
+                nodeData.Enemy.TakeDamage(1);
+                TriggerFlash(enemySection, enemyBase, enemyFlash, 0.1f);
+                UpdateBattleUI(popupInstance, nodeData);
+            }
+        });
+
+        playerSection.RegisterCallback<ClickEvent>(evt =>
+        {
+            if (nodeData.AssignedCreature != null)
+            {
+                nodeData.AssignedCreature.Heal(1);
+                TriggerFlash(playerSection, playerBase, playerFlash, 0.1f);
+                UpdateBattleUI(popupInstance, nodeData);
+            }
+        });
 
         titleLabel.text = nodeData.NodeName;
         imageElement.style.backgroundImage = new StyleBackground(nodeData.NodeSprite);
@@ -356,6 +389,30 @@ public class UIManager : MonoBehaviour
             UpdateBattleUI(popupInstance, nodeData);
         };
 
+        var levelDownBtn = popupInstance.Q<Button>("LevelDownBtn");
+        var levelUpBtn = popupInstance.Q<Button>("LevelUpBtn");
+
+        if (levelDownBtn != null && levelUpBtn != null)
+        {
+            levelDownBtn.clicked += () =>
+            {
+                if (nodeData.adventureLevel > 0)
+                {
+                    nodeData.adventureLevel--;
+                    UpdateBattleUI(popupInstance, nodeData);
+                }
+            };
+
+            levelUpBtn.clicked += () =>
+            {
+                if (nodeData.adventureLevel < nodeData.MaxUnlockedAdventureLevel)
+                {
+                    nodeData.adventureLevel++;
+                    UpdateBattleUI(popupInstance, nodeData);
+                }
+            };
+        }
+
         if (nodeData.isOwned)
         {
             buyButton.style.display = DisplayStyle.None;
@@ -401,6 +458,28 @@ public class UIManager : MonoBehaviour
         var playerHPBar = popupInstance.Q<VisualElement>("PlayerHPBar");
         var assignCreatureButton = popupInstance.Q<Button>("AssignCreatureButton");
         var removeCreatureButton = popupInstance.Q<Button>("RemoveCreatureButton");
+
+        var progressLabel = popupInstance.Q<Label>("ProgressLabel");
+        var levelLabel = popupInstance.Q<Label>("LevelLabel");
+        var levelDownBtn = popupInstance.Q<Button>("LevelDownBtn");
+        var levelUpBtn = popupInstance.Q<Button>("LevelUpBtn");
+
+        if (progressLabel != null)
+        {
+            if (nodeData.adventureLevel < nodeData.MaxUnlockedAdventureLevel)
+            {
+                progressLabel.text = "Progress: Completed";
+            }
+            else
+            {
+                int target = (nodeData.adventureLevel + 1) * 10;
+                progressLabel.text = $"Progress: {nodeData.AdventureProgress}/{target}";
+            }
+
+            levelLabel.text = $"Lvl: {nodeData.adventureLevel}";
+            levelDownBtn.SetEnabled(nodeData.adventureLevel > 0);
+            levelUpBtn.SetEnabled(nodeData.adventureLevel < nodeData.MaxUnlockedAdventureLevel);
+        }
 
         if (nodeData.Enemy != null && nodeData.Enemy.Definition != null)
         {
@@ -565,6 +644,47 @@ public class UIManager : MonoBehaviour
         if (popupStack.Count == 0)
         {
             popupHost.style.display = DisplayStyle.None;
+        }
+    }
+
+    // Flash Feedback Logic
+    private void TriggerFlash(VisualElement element, Color baseColor, Color flashColor, float duration)
+    {
+        if (element == null) return;
+
+        // Stop existing flash on this element if any
+        if (activeFlashes.TryGetValue(element, out var existingCoroutine))
+        {
+            if (existingCoroutine != null) StopCoroutine(existingCoroutine);
+            activeFlashes.Remove(element);
+        }
+
+        // Start new flash
+        var coroutine = StartCoroutine(PerformFlash(element, baseColor, flashColor, duration));
+        activeFlashes.Add(element, coroutine);
+    }
+
+    private System.Collections.IEnumerator PerformFlash(VisualElement element, Color baseColor, Color flashColor, float duration)
+    {
+        float elapsed = 0f;
+        // Start at peak flash
+        element.style.backgroundColor = flashColor;
+
+        while (elapsed < duration)
+        {
+            if (element == null) yield break; // Safety check
+
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            // Lerp back to base
+            element.style.backgroundColor = Color.Lerp(flashColor, baseColor, t);
+            yield return null;
+        }
+
+        if (element != null)
+        {
+            element.style.backgroundColor = baseColor;
+            activeFlashes.Remove(element);
         }
     }
 }
