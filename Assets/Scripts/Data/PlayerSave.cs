@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [Serializable]
 public class PlayerSave
 {
-    public int money;
+    public long money;
     public List<ItemCount> items;
     public List<CreatureSave> creatures;
 }

@@ -1,55 +1,54 @@
 ﻿using UnityEngine;
 using UnityEngine.UIElements;
 
-public class AspectRatioBox : VisualElement
+[UxmlElement]
+public partial class AspectRatioBox : VisualElement
 {
-    // === UXML Factory & Traits (z nowym atrybutem) ===
-    public new class UxmlFactory : UxmlFactory<AspectRatioBox, UxmlTraits>
-    { }
+    // === Atrybuty UXML (zastępują UxmlTraits) ===
 
-    public new class UxmlTraits : VisualElement.UxmlTraits
+    [UxmlAttribute("ratio-x")]
+    public float RatioX
     {
-        private UxmlFloatAttributeDescription m_ratioX =
-            new UxmlFloatAttributeDescription { name = "ratio-x", defaultValue = 1.0f };
-
-        private UxmlFloatAttributeDescription m_ratioY =
-            new UxmlFloatAttributeDescription { name = "ratio-y", defaultValue = 1.0f };
-
-        // NOWY ATRYBUT: Przełącznik trybu dopasowania
-        private UxmlBoolAttributeDescription m_fitToParent =
-            new UxmlBoolAttributeDescription { name = "fit-to-parent", defaultValue = false };
-
-        public override void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc)
+        get => m_RatioX;
+        set
         {
-            base.Init(ve, bag, cc);
-            var box = ve as AspectRatioBox;
-
-            float x = m_ratioX.GetValueFromBag(bag, cc);
-            float y = m_ratioY.GetValueFromBag(bag, cc);
-
-            if (y > 0)
-                box.AspectRatio = x / y;
-            else
-                box.AspectRatio = 1.0f;
-
-            // Odczytujemy nowy atrybut z UXML
-            box.FitToParent = m_fitToParent.GetValueFromBag(bag, cc);
+            m_RatioX = value;
+            UpdateAspectRatio();
         }
     }
+    private float m_RatioX = 1.0f;
+
+    [UxmlAttribute("ratio-y")]
+    public float RatioY
+    {
+        get => m_RatioY;
+        set
+        {
+            m_RatioY = value;
+            UpdateAspectRatio();
+        }
+    }
+    private float m_RatioY = 1.0f;
+
+    [UxmlAttribute("fit-to-parent")]
+    public bool FitToParent { get; set; } = false;
 
     // === Logika Głównego Elementu ===
 
-    public float AspectRatio { get; set; } = 1.0f;
-
-    /// <summary>
-    /// Jeśli true, element dopasuje się do rodzica (dla #GridContainer).
-    /// Jeśli false, dopasuje się do szerokości flex (dla #MapTile).
-    /// </summary>
-    public bool FitToParent { get; set; } = false;
+    public float AspectRatio { get; private set; } = 1.0f;
 
     public AspectRatioBox()
     {
         RegisterCallback<GeometryChangedEvent>(OnGeometryChanged);
+        UpdateAspectRatio();
+    }
+
+    private void UpdateAspectRatio()
+    {
+        if (m_RatioY > 0)
+            AspectRatio = m_RatioX / m_RatioY;
+        else
+            AspectRatio = 1.0f;
     }
 
     private void OnGeometryChanged(GeometryChangedEvent evt)

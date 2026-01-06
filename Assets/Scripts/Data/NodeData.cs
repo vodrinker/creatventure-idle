@@ -14,8 +14,8 @@ public class NodeData
     public int productionLevel { get; set; }
     public int adventureLevel { get; set; }
 
-    public float baseCost { get; set; }
-    public int UpgradeCost => (int)(baseCost * Mathf.Pow(1.2f, productionLevel));
+    public long baseCost { get; set; }
+    public long UpgradeCost => GameBalance.CalculateNodeUpgradeCost(baseCost, productionLevel);
 
     public List<NodeProductionProgress> productionProgresses;
     public List<CreatureSO> PossibleCreatures { get; private set; }
@@ -29,7 +29,7 @@ public class NodeData
     public int AdventureProgress { get; set; }
 
     // Enemy Level = Distance + 1 + Current Selected Level (adventureLevel)
-    public int EnemyLevel => GetDistanceTo(Vector2Int.zero) + 1 + adventureLevel;
+    public int EnemyLevel => GameBalance.CalculateEnemyLevel(GetDistanceTo(Vector2Int.zero), adventureLevel);
 
     public NodeData(Vector2Int coordinates, NodeDefinitionSO definition)
     {

@@ -44,8 +44,8 @@ public class GameManager : MonoBehaviour
         OnNodeUpdated += (n) => SaveGame();
     }
 
-    private const float BattleInterval = 3f;
-    private const float HealRate = 1f;
+    private const float BattleInterval = GameBalance.BattleInterval;
+    private const float HealRate = GameBalance.PassiveHealRate;
 
     private void Start()
     {
@@ -96,7 +96,7 @@ public class GameManager : MonoBehaviour
             foreach (var production in node.productionProgresses)
             {
                 // New formula: base * 1.15^lvl
-                float productionRate = production.baseAmount * Mathf.Pow(1.15f, node.productionLevel);
+                float productionRate = GameBalance.CalculateProductionRate(production.baseAmount, node.productionLevel);
                 production.currentProductionProgress += productionRate * deltaTime;
 
                 if (production.currentProductionProgress >= 1)
@@ -176,13 +176,7 @@ public class GameManager : MonoBehaviour
 
     private float CalculateDamage(Creature attacker, Creature defender)
     {
-        float baseDamage = attacker.Attack;
-        float multiplier = 1f;
-        if (attacker.Type != null && defender.Type != null)
-        {
-            multiplier = attacker.Type.GetDamageMultiplier(defender.Type);
-        }
-        return baseDamage * multiplier;
+        return GameBalance.CalculateDamage(attacker, defender);
     }
 
     private void SpawnEnemyForNode(NodeData node)
@@ -194,6 +188,8 @@ public class GameManager : MonoBehaviour
         node.BattleTimer = 0f;
         node.IsHealing = false;
     }
+
+    // Duplicate SellItem removed. The correct one is below.
 
     public NodeData GetNodeAt(Vector2Int coordinates)
     {
@@ -221,12 +217,37 @@ public class GameManager : MonoBehaviour
         return neighbors;
     }
 
+    private void UnlockNeighborVisibility(Vector2Int targetCoords)
+    {
+        var neighbor = GetNodeAt(targetCoords);
+        if (neighbor != null)
+        {
+            neighbor.isVisible = true;
+            OnNodeUpdated?.Invoke(neighbor);
+        }
+    }
+
     public bool TryUnlockNode(NodeData node)
     {
-        if (node != null && node.isVisible && !node.isOwned && Player.Money >= node.UpgradeCost)
+        if (node == null || node.isOwned) return false;
+        long cost = node.UpgradeCost; // At lvl 0 cost is baseCost
+        if (Player.Money >= cost)
         {
-            Player.Money -= node.UpgradeCost;
-            UnlockNode(node);
+            Player.Money -= cost;
+            node.isOwned = true;
+            node.isVisible = true;
+
+            // Reveal neighbors
+            int x = node.Coordinates.x;
+            int y = node.Coordinates.y;
+            UnlockNeighborVisibility(new Vector2Int(x + 1, y));
+            UnlockNeighborVisibility(new Vector2Int(x - 1, y));
+            UnlockNeighborVisibility(new Vector2Int(x, y + 1));
+            UnlockNeighborVisibility(new Vector2Int(x, y - 1));
+
+            SpawnEnemyForNode(node);
+
+            OnNodeUpdated?.Invoke(node);
             OnPlayerDataUpdated?.Invoke();
             return true;
         }
@@ -236,8 +257,8 @@ public class GameManager : MonoBehaviour
     public bool TryUpgradeNode(NodeData node)
     {
         if (node == null || !node.isOwned) return false;
+        long cost = node.UpgradeCost;
 
-        int cost = node.UpgradeCost;
         if (Player.Money >= cost)
         {
             Player.Money -= cost;
@@ -576,13 +597,7 @@ public class GameManager : MonoBehaviour
 
     private int CalculateExpForLevel(int targetLevel)
     {
-        if (targetLevel <= 1) return 0;
-        float exp = 100f;
-        for (int i = 1; i < targetLevel; i++)
-        {
-            exp *= 1.3f;
-        }
-        return Mathf.CeilToInt(exp);
+        return GameBalance.CalculateExpRequiredForLevel(targetLevel);
     }
 
     private void OnApplicationQuit()
@@ -593,7 +608,7 @@ public class GameManager : MonoBehaviour
     {
         if (node.AssignedCreature == null) return;
 
-        int expGain = 10 + node.EnemyLevel * 2;
+        int expGain = GameBalance.CalculateExpGain(node.EnemyLevel);
         node.AssignedCreature.Exp += expGain;
 
         // Progress System
@@ -601,7 +616,7 @@ public class GameManager : MonoBehaviour
         {
             node.AdventureProgress++;
             // Target: (level + 1) * 10. E.g. Lvl 0 -> 10 kills. Lvl 1 -> 20 kills.
-            int requiredKills = (node.adventureLevel + 1) * 10;
+            int requiredKills = GameBalance.CalculateRequiredKillsForAdventure(node.adventureLevel);
             if (node.AdventureProgress >= requiredKills)
             {
                 node.MaxUnlockedAdventureLevel++;
@@ -612,5 +627,12 @@ public class GameManager : MonoBehaviour
         node.IsHealing = true;
         OnCreaturesUpdated?.Invoke();
         OnNodeUpdated?.Invoke(node);
+    }
+    public void ResetSaveData()
+    {
+        PlayerPrefs.DeleteKey(SaveKey);
+        PlayerPrefs.Save();
+        Debug.Log("Save data reset. Reloading scene...");
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
     }
 }

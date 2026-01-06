@@ -88,7 +88,6 @@ public class MonsterTypeSOEditor : Editor
             GUI.backgroundColor = defaultBgColor;
             EditorGUI.indentLevel--;
         }
-
         serializedObject.ApplyModifiedProperties();
     }
 }

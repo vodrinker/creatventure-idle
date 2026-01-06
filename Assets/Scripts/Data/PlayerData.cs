@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 public class PlayerData
 {
-    public int Money { get; set; }
+    public long Money { get; set; }
     public Dictionary<ItemSO, int> Items { get; private set; }
     public List<Creature> Creatures { get; private set; }
 

@@ -12,8 +12,8 @@ public class NodeSave
     public int adventureLevel;
     public int maxUnlockedAdventureLevel;
     public int adventureProgress;
-    public float baseCost;
-    public int upgradeCost;
+    public long baseCost;
+    public long upgradeCost;
     public List<ProductionProgressSave> productionProgresses;
     public int assignedCreatureIndex = -1;
 }

@@ -9,29 +9,18 @@ public class Creature
     public int Exp { get; set; }
     public float CurrentHealth { get; private set; }
 
-    private const int BaseLevelExp = 100;
-    private const float LevelMultiplier = 1.3f;
-    private const float StatMultiplier = 1.1f;
+
 
     public int Level
     {
         get
         {
-            if (Exp < BaseLevelExp) return 1;
-
-            int level = 1;
-            float requiredExp = BaseLevelExp;
-            while (Exp >= requiredExp)
-            {
-                level++;
-                requiredExp *= LevelMultiplier;
-            }
-            return level;
+            return GameBalance.CalculateCreatureLevel(Exp);
         }
     }
 
-    public float MaxHealth => Definition.baseHealth * Mathf.Pow(StatMultiplier, Level);
-    public float Attack => Definition.baseAttack * Mathf.Pow(StatMultiplier, Level);
+    public float MaxHealth => GameBalance.CalculateCreatureMaxHealth(Definition.baseHealth, Level);
+    public float Attack => GameBalance.CalculateCreatureAttack(Definition.baseAttack, Level);
     public bool IsAlive => CurrentHealth > 0;
     public bool IsFullHealth => CurrentHealth >= MaxHealth;
 
@@ -44,7 +33,7 @@ public class Creature
 
     public static Creature CreateAtLevel(CreatureSO definition, int targetLevel)
     {
-        int exp = CalculateExpForLevel(targetLevel);
+        int exp = GameBalance.CalculateExpRequiredForLevel(targetLevel);
         return new Creature(definition, exp);
     }
 
@@ -65,24 +54,8 @@ public class Creature
 
     public int GetExpForNextLevel()
     {
-        float requiredExp = BaseLevelExp;
-        for (int i = 1; i < Level; i++)
-        {
-            requiredExp *= LevelMultiplier;
-        }
-        return Mathf.CeilToInt(requiredExp * LevelMultiplier);
+        return GameBalance.CalculateExpForNextLevel(Level);
     }
 
-    private static int CalculateExpForLevel(int targetLevel)
-    {
-        if (targetLevel <= 1) return 0;
-        float exp = 0;
-        float required = BaseLevelExp;
-        for (int i = 1; i < targetLevel; i++)
-        {
-            exp = required;
-            required *= LevelMultiplier;
-        }
-        return Mathf.CeilToInt(exp);
-    }
+
 }
