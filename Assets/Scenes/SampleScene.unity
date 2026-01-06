@@ -241,7 +241,7 @@ MonoBehaviour:
   centerNodeDefinition: {fileID: 11400000, guid: 109c7aa4c4605bd49873b6418cc723f8, type: 2}
   lockedNodeSprite: {fileID: 9169279571100635141, guid: 67263b87ea7044d49bc23fbf2e7f6a25, type: 3}
   debugCreatureSO: {fileID: 11400000, guid: bc1600b17449119428d20c5997f768e3, type: 2}
-  debugCreatureLevel: 2
+  debugCreatureLevel: 1
 --- !u!1 &1656825787
 GameObject:
   m_ObjectHideFlags: 0

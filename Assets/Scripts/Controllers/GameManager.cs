@@ -95,7 +95,10 @@ public class GameManager : MonoBehaviour
         {
             foreach (var production in node.productionProgresses)
             {
-                production.currentProductionProgress += production.baseAmount * node.productionLevel * deltaTime;
+                // New formula: base * 1.15^lvl
+                float productionRate = production.baseAmount * Mathf.Pow(1.15f, node.productionLevel);
+                production.currentProductionProgress += productionRate * deltaTime;
+
                 if (production.currentProductionProgress >= 1)
                 {
                     int producedAmount = Mathf.FloorToInt(production.currentProductionProgress);
@@ -224,6 +227,22 @@ public class GameManager : MonoBehaviour
         {
             Player.Money -= node.UpgradeCost;
             UnlockNode(node);
+            OnPlayerDataUpdated?.Invoke();
+            return true;
+        }
+        return false;
+    }
+
+    public bool TryUpgradeNode(NodeData node)
+    {
+        if (node == null || !node.isOwned) return false;
+
+        int cost = node.UpgradeCost;
+        if (Player.Money >= cost)
+        {
+            Player.Money -= cost;
+            node.productionLevel++;
+            OnNodeUpdated?.Invoke(node);
             OnPlayerDataUpdated?.Invoke();
             return true;
         }
@@ -416,6 +435,10 @@ public class GameManager : MonoBehaviour
                 node.adventureLevel = ns.adventureLevel; // Ensure loaded level is set
                 node.adventureLevel = Mathf.Clamp(node.adventureLevel, 0, node.MaxUnlockedAdventureLevel); // Safety clamp
                 node.baseCost = ns.baseCost;
+                if (node.Coordinates == Vector2Int.zero && node.baseCost < 1)
+                {
+                    node.baseCost = 100;
+                }
 
                 if (ns.productionProgresses != null && node.productionProgresses != null)
                 {

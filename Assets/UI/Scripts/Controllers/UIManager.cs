@@ -32,6 +32,7 @@ public class UIManager : MonoBehaviour
     // Flash feedback tracking
     private Dictionary<VisualElement, Coroutine> activeFlashes = new Dictionary<VisualElement, Coroutine>();
     private bool isShowingItemsView;
+    private Dictionary<ItemSO, VisualElement> itemRowCache = new Dictionary<ItemSO, VisualElement>();
 
     private GameManager gameManager;
 
@@ -73,7 +74,7 @@ public class UIManager : MonoBehaviour
 
         if (isShowingItemsView)
         {
-            ShowItemsView();
+            RefreshItemsView();
         }
 
         if (creaturesListView != null && creaturesListView.parent != null)
@@ -160,6 +161,77 @@ public class UIManager : MonoBehaviour
         isShowingItemsView = false;
     }
 
+    private void RefreshItemsView()
+    {
+        if (gameManager == null || !isShowingItemsView) return;
+
+        // Find total label in current view
+        var sellAllValue = contentContainer.Q<Label>("SellAllValue");
+        long totalValue = 0;
+        var items = new List<KeyValuePair<ItemSO, int>>(gameManager.Player.Items);
+
+        // Update or Create rows
+        var itemsTable = contentContainer.Q<VisualElement>("ItemsTable");
+
+        foreach (var itemData in items)
+        {
+            long itemValue = (long)itemData.Key.value * itemData.Value;
+            totalValue += itemValue;
+
+            if (itemRowCache.TryGetValue(itemData.Key, out var row))
+            {
+                // Update existing
+                var qtyLabel = row.Q<Label>(className: "item-qty");
+                var valueLabel = row.Q<Label>(className: "item-value");
+                if (qtyLabel != null) qtyLabel.text = itemData.Value.ToString();
+                if (valueLabel != null) valueLabel.text = $"{itemValue}$";
+            }
+            else
+            {
+                // Create new row (if new item appeared while view is open)
+                if (itemsTable != null)
+                {
+                    var newRow = CreateItemRow(itemData.Key, itemData.Value, itemValue, items);
+                    itemsTable.Add(newRow);
+                    itemRowCache[itemData.Key] = newRow;
+                }
+            }
+        }
+
+        if (sellAllValue != null) sellAllValue.text = $"{totalValue}$";
+    }
+
+    private VisualElement CreateItemRow(ItemSO item, int qty, long totalValue, List<KeyValuePair<ItemSO, int>> allItems)
+    {
+        var row = new VisualElement();
+        row.AddToClassList("item-row");
+
+        var nameLabel = new Label(item.itemName);
+        nameLabel.AddToClassList("item-name");
+        row.Add(nameLabel);
+
+        var qtyLabel = new Label(qty.ToString());
+        qtyLabel.AddToClassList("item-qty");
+        row.Add(qtyLabel);
+
+        var valueLabel = new Label($"{totalValue}$");
+        valueLabel.AddToClassList("item-value");
+        row.Add(valueLabel);
+
+        var sellButton = new Button(() =>
+        {
+            gameManager.SellItem(item, qty);
+            // We rely on OnPlayerDataUpdated -> RefreshItemsView, 
+            // but immediate feedback might be nice. 
+            // Actually, SellItem triggers OnPlayerDataUpdated, so it loopbacks.
+        });
+        sellButton.text = "Sell";
+        sellButton.AddToClassList("item-sell-button");
+        row.Add(sellButton);
+
+        return row;
+    }
+
     private void ShowItemsView()
     {
         if (gameManager == null) return;
@@ -169,6 +241,7 @@ public class UIManager : MonoBehaviour
         if (currentMapView != null) currentMapView.UnregisterCallbacks();
         currentMapView = null;
         isShowingItemsView = true;
+        itemRowCache.Clear();
 
         var itemsViewInstance = itemsViewAsset.CloneTree();
         var itemsTable = itemsViewInstance.Q<VisualElement>("ItemsTable");
@@ -180,44 +253,23 @@ public class UIManager : MonoBehaviour
 
         foreach (var itemData in items)
         {
-            var row = new VisualElement();
-            row.AddToClassList("item-row");
-
-            var nameLabel = new Label(itemData.Key.itemName);
-            nameLabel.AddToClassList("item-name");
-            row.Add(nameLabel);
-
-            var qtyLabel = new Label(itemData.Value.ToString());
-            qtyLabel.AddToClassList("item-qty");
-            row.Add(qtyLabel);
-
             long itemValue = (long)itemData.Key.value * itemData.Value;
             totalValue += itemValue;
 
-            var valueLabel = new Label($"{itemValue}$");
-            valueLabel.AddToClassList("item-value");
-            row.Add(valueLabel);
-
-            var sellButton = new Button(() =>
-            {
-                gameManager.SellItem(itemData.Key, itemData.Value);
-                ShowItemsView();
-            });
-            sellButton.text = "Sell";
-            sellButton.AddToClassList("item-sell-button");
-            row.Add(sellButton);
-
+            var row = CreateItemRow(itemData.Key, itemData.Value, itemValue, items);
             itemsTable.Add(row);
+            itemRowCache[itemData.Key] = row;
         }
 
         sellAllValue.text = $"{totalValue}$";
         sellAllButton.clicked += () =>
         {
-            foreach (var itemData in items)
+            // Sell all needs to iterate a copy because collection modifies
+            var itemsCopy = new List<KeyValuePair<ItemSO, int>>(gameManager.Player.Items);
+            foreach (var itemData in itemsCopy)
             {
                 gameManager.SellItem(itemData.Key, itemData.Value);
             }
-            ShowItemsView();
         };
 
         contentContainer.Add(itemsViewInstance);
@@ -310,84 +362,104 @@ public class UIManager : MonoBehaviour
         Color playerFlash = new Color(80f / 255f, 150f / 255f, 80f / 255f, 0.6f);
 
         // manual click interaction
-        enemySection.RegisterCallback<ClickEvent>(evt =>
+        if (enemySection != null)
         {
-            if (nodeData.Enemy != null && nodeData.Enemy.IsAlive)
+            enemySection.RegisterCallback<ClickEvent>(evt =>
             {
-                nodeData.Enemy.TakeDamage(1);
-                TriggerFlash(enemySection, enemyBase, enemyFlash, 0.1f);
-                UpdateBattleUI(popupInstance, nodeData);
-            }
-        });
+                if (nodeData.Enemy != null && nodeData.Enemy.IsAlive)
+                {
+                    nodeData.Enemy.TakeDamage(1);
+                    TriggerFlash(enemySection, enemyBase, enemyFlash, 0.1f);
+                    UpdateBattleUI(popupInstance, nodeData);
+                }
+            });
+        }
 
-        playerSection.RegisterCallback<ClickEvent>(evt =>
+        if (playerSection != null)
         {
-            if (nodeData.AssignedCreature != null)
+            playerSection.RegisterCallback<ClickEvent>(evt =>
             {
-                nodeData.AssignedCreature.Heal(1);
-                TriggerFlash(playerSection, playerBase, playerFlash, 0.1f);
-                UpdateBattleUI(popupInstance, nodeData);
+                if (nodeData.AssignedCreature != null)
+                {
+                    nodeData.AssignedCreature.Heal(1);
+                    TriggerFlash(playerSection, playerBase, playerFlash, 0.1f);
+                    UpdateBattleUI(popupInstance, nodeData);
+                }
+            });
+        }
+
+        if (titleLabel != null) titleLabel.text = nodeData.NodeName;
+        if (imageElement != null) imageElement.style.backgroundImage = new StyleBackground(nodeData.NodeSprite);
+
+        if (economyTab != null)
+        {
+            economyTab.clicked += () =>
+            {
+                economyTab.AddToClassList("tab-active");
+                if (battleTab != null) battleTab.RemoveFromClassList("tab-active");
+                if (economyContent != null) economyContent.style.display = DisplayStyle.Flex;
+                if (battleContent != null) battleContent.style.display = DisplayStyle.None;
+                if (imageElement != null) imageElement.style.display = DisplayStyle.Flex; // Show image in economy
+            };
+        }
+
+        if (battleTab != null)
+        {
+            battleTab.clicked += () =>
+            {
+                battleTab.AddToClassList("tab-active");
+                if (economyTab != null) economyTab.RemoveFromClassList("tab-active");
+                if (battleContent != null) battleContent.style.display = DisplayStyle.Flex;
+                if (economyContent != null) economyContent.style.display = DisplayStyle.None;
+                if (imageElement != null) imageElement.style.display = DisplayStyle.None; // Hide image in battle
+            };
+        }
+
+        if (productionList != null && nodeData.productionProgresses != null)
+        {
+            productionList.Clear();
+            for (int i = 0; i < nodeData.productionProgresses.Count; i++)
+            {
+                var prod = nodeData.productionProgresses[i];
+                var row = new VisualElement();
+                row.AddToClassList("production-item-row");
+
+                var nameLabel = new Label(prod.item != null ? prod.item.itemName : "Unknown");
+                nameLabel.AddToClassList("production-item-name");
+                row.Add(nameLabel);
+
+                float rate = prod.baseAmount * Mathf.Pow(1.15f, nodeData.productionLevel);
+                var rateLabel = new Label($"{rate:F2}/s");
+                rateLabel.AddToClassList("production-rate");
+                row.Add(rateLabel);
+
+                var progressContainer = new VisualElement();
+                progressContainer.AddToClassList("progress-bar-container");
+                var progressFill = new VisualElement();
+                progressFill.AddToClassList("progress-bar-fill");
+                progressFill.name = $"ProgressFill_{i}";
+                float fillWidth = prod.currentProductionProgress * 100f;
+                progressFill.style.width = new Length(fillWidth, LengthUnit.Pixel);
+                progressContainer.Add(progressFill);
+                row.Add(progressContainer);
+
+                productionList.Add(row);
             }
-        });
-
-        titleLabel.text = nodeData.NodeName;
-        imageElement.style.backgroundImage = new StyleBackground(nodeData.NodeSprite);
-
-        economyTab.clicked += () =>
-        {
-            economyTab.AddToClassList("tab-active");
-            battleTab.RemoveFromClassList("tab-active");
-            economyContent.style.display = DisplayStyle.Flex;
-            battleContent.style.display = DisplayStyle.None;
-            imageElement.style.display = DisplayStyle.Flex; // Show image in economy
-        };
-
-        battleTab.clicked += () =>
-        {
-            battleTab.AddToClassList("tab-active");
-            economyTab.RemoveFromClassList("tab-active");
-            battleContent.style.display = DisplayStyle.Flex;
-            economyContent.style.display = DisplayStyle.None;
-            imageElement.style.display = DisplayStyle.None; // Hide image in battle
-        };
-
-        productionList.Clear();
-        for (int i = 0; i < nodeData.productionProgresses.Count; i++)
-        {
-            var prod = nodeData.productionProgresses[i];
-            var row = new VisualElement();
-            row.AddToClassList("production-item-row");
-
-            var nameLabel = new Label(prod.item != null ? prod.item.itemName : "Unknown");
-            nameLabel.AddToClassList("production-item-name");
-            row.Add(nameLabel);
-
-            float rate = prod.baseAmount * nodeData.productionLevel;
-            var rateLabel = new Label($"{rate:F2}/s");
-            rateLabel.AddToClassList("production-rate");
-            row.Add(rateLabel);
-
-            var progressContainer = new VisualElement();
-            progressContainer.AddToClassList("progress-bar-container");
-            var progressFill = new VisualElement();
-            progressFill.AddToClassList("progress-bar-fill");
-            progressFill.name = $"ProgressFill_{i}";
-            float fillWidth = prod.currentProductionProgress * 100f;
-            progressFill.style.width = new Length(fillWidth, LengthUnit.Pixel);
-            progressContainer.Add(progressFill);
-            row.Add(progressContainer);
-
-            productionList.Add(row);
         }
 
         UpdateBattleUI(popupInstance, nodeData);
 
-        assignCreatureButton.clicked += () => OpenCreaturePickerPopup(nodeData, popupInstance);
-        removeCreatureButton.clicked += () =>
+        if (assignCreatureButton != null)
+            assignCreatureButton.clicked += () => OpenCreaturePickerPopup(nodeData, popupInstance);
+
+        if (removeCreatureButton != null)
         {
-            gameManager.RemoveCreatureFromNode(nodeData);
-            UpdateBattleUI(popupInstance, nodeData);
-        };
+            removeCreatureButton.clicked += () =>
+            {
+                gameManager.RemoveCreatureFromNode(nodeData);
+                UpdateBattleUI(popupInstance, nodeData);
+            };
+        }
 
         var levelDownBtn = popupInstance.Q<Button>("LevelDownBtn");
         var levelUpBtn = popupInstance.Q<Button>("LevelUpBtn");
@@ -418,9 +490,40 @@ public class UIManager : MonoBehaviour
             buyButton.style.display = DisplayStyle.None;
             economyTab.style.display = DisplayStyle.Flex;
             battleTab.style.display = DisplayStyle.Flex;
+
+            titleLabel.text = $"{nodeData.NodeName} Lvl {nodeData.productionLevel}";
+
+            var upgradeButton = popupInstance.Q<Button>("UpgradeButton");
+            if (upgradeButton != null)
+            {
+                upgradeButton.style.display = DisplayStyle.Flex;
+                upgradeButton.text = $"Upgrade ({nodeData.UpgradeCost})";
+                upgradeButton.clicked += () =>
+                {
+                    bool success = gameManager.TryUpgradeNode(nodeData);
+                    if (success)
+                    {
+                        // Refresh logic
+                        titleLabel.text = $"{nodeData.NodeName} Lvl {nodeData.productionLevel}";
+                        upgradeButton.text = $"Upgrade ({nodeData.UpgradeCost})";
+
+                        // Recalculate rates display
+                        var rateLabels = popupInstance.Query<Label>(className: "production-rate").ToList();
+                        for (int i = 0; i < rateLabels.Count && i < nodeData.productionProgresses.Count; i++)
+                        {
+                            var prod = nodeData.productionProgresses[i];
+                            float rate = prod.baseAmount * Mathf.Pow(1.15f, nodeData.productionLevel);
+                            rateLabels[i].text = $"{rate:F2}/s";
+                        }
+                    }
+                };
+            }
         }
         else
         {
+            var upgradeButton = popupInstance.Q<Button>("UpgradeButton");
+            if (upgradeButton != null) upgradeButton.style.display = DisplayStyle.None;
+
             economyTab.style.display = DisplayStyle.None;
             battleTab.style.display = DisplayStyle.None;
             economyContent.style.display = DisplayStyle.None;
@@ -429,6 +532,7 @@ public class UIManager : MonoBehaviour
             if (nodeData.isVisible)
             {
                 buyButton.text = $"Buy ({nodeData.UpgradeCost})";
+                // Note: UpgradeCost at lvl 0 is same as baseCost (formula: base * 1.2^0 = base)
                 buyButton.style.display = DisplayStyle.Flex;
                 buyButton.clicked += () =>
                 {
@@ -448,14 +552,18 @@ public class UIManager : MonoBehaviour
 
     private void UpdateBattleUI(VisualElement popupInstance, NodeData nodeData)
     {
+        if (popupInstance == null || nodeData == null) return;
+
         var enemyInfo = popupInstance.Q<Label>("EnemyInfo");
         var enemyHP = popupInstance.Q<Label>("EnemyHP");
         var enemyImage = popupInstance.Q<VisualElement>("EnemyImage");
         var enemyHPBar = popupInstance.Q<VisualElement>("EnemyHPBar");
+
         var playerInfo = popupInstance.Q<Label>("PlayerInfo");
         var playerHP = popupInstance.Q<Label>("PlayerHP");
         var playerImage = popupInstance.Q<VisualElement>("PlayerImage");
         var playerHPBar = popupInstance.Q<VisualElement>("PlayerHPBar");
+
         var assignCreatureButton = popupInstance.Q<Button>("AssignCreatureButton");
         var removeCreatureButton = popupInstance.Q<Button>("RemoveCreatureButton");
 
@@ -463,6 +571,14 @@ public class UIManager : MonoBehaviour
         var levelLabel = popupInstance.Q<Label>("LevelLabel");
         var levelDownBtn = popupInstance.Q<Button>("LevelDownBtn");
         var levelUpBtn = popupInstance.Q<Button>("LevelUpBtn");
+        var upgradeButton = popupInstance.Q<Button>("UpgradeButton");
+
+        if (upgradeButton != null && nodeData.isOwned)
+        {
+            upgradeButton.SetEnabled(gameManager.Player.Money >= nodeData.UpgradeCost);
+            // Optional: Update text if cost could change dynamically or just to be safe
+            upgradeButton.text = $"Upgrade ({nodeData.UpgradeCost})";
+        }
 
         if (progressLabel != null)
         {
@@ -475,63 +591,76 @@ public class UIManager : MonoBehaviour
                 int target = (nodeData.adventureLevel + 1) * 10;
                 progressLabel.text = $"Progress: {nodeData.AdventureProgress}/{target}";
             }
-
-            levelLabel.text = $"Lvl: {nodeData.adventureLevel}";
-            levelDownBtn.SetEnabled(nodeData.adventureLevel > 0);
-            levelUpBtn.SetEnabled(nodeData.adventureLevel < nodeData.MaxUnlockedAdventureLevel);
         }
+
+        if (levelLabel != null) levelLabel.text = $"Lvl: {nodeData.adventureLevel}";
+        if (levelDownBtn != null) levelDownBtn.SetEnabled(nodeData.adventureLevel > 0);
+        if (levelUpBtn != null) levelUpBtn.SetEnabled(nodeData.adventureLevel < nodeData.MaxUnlockedAdventureLevel);
 
         if (nodeData.Enemy != null && nodeData.Enemy.Definition != null)
         {
-            enemyInfo.text = $"{nodeData.Enemy.Definition.creatureName} Lv. {nodeData.Enemy.Level}";
-            enemyHP.text = $"HP: {nodeData.Enemy.CurrentHealth:F0}/{nodeData.Enemy.MaxHealth:F0}";
-            if (nodeData.Enemy.Definition.sprite != null)
+            if (enemyInfo != null) enemyInfo.text = $"{nodeData.Enemy.Definition.creatureName} Lv. {nodeData.Enemy.Level}";
+            if (enemyHP != null) enemyHP.text = $"HP: {nodeData.Enemy.CurrentHealth:F0}/{nodeData.Enemy.MaxHealth:F0}";
+            if (enemyImage != null)
             {
-                enemyImage.style.display = DisplayStyle.Flex;
-                enemyImage.style.backgroundImage = new StyleBackground(nodeData.Enemy.Definition.sprite);
+                if (nodeData.Enemy.Definition.sprite != null)
+                {
+                    enemyImage.style.display = DisplayStyle.Flex;
+                    enemyImage.style.backgroundImage = new StyleBackground(nodeData.Enemy.Definition.sprite);
+                }
+                else
+                {
+                    enemyImage.style.display = DisplayStyle.None;
+                }
             }
-            else
+            if (enemyHPBar != null)
             {
-                enemyImage.style.display = DisplayStyle.None;
+                float enemyHPPercent = nodeData.Enemy.CurrentHealth / nodeData.Enemy.MaxHealth * 100f;
+                enemyHPBar.style.width = new Length(enemyHPPercent, LengthUnit.Percent);
             }
-            float enemyHPPercent = nodeData.Enemy.CurrentHealth / nodeData.Enemy.MaxHealth * 100f;
-            enemyHPBar.style.width = new Length(enemyHPPercent, LengthUnit.Percent);
         }
         else
         {
-            enemyInfo.text = "No enemy";
-            enemyHP.text = "HP: -/-";
-            enemyImage.style.backgroundImage = StyleKeyword.None;
-            enemyHPBar.style.width = new Length(0, LengthUnit.Percent);
+            if (enemyInfo != null) enemyInfo.text = "No enemy";
+            if (enemyHP != null) enemyHP.text = "HP: -/-";
+            if (enemyImage != null) enemyImage.style.backgroundImage = StyleKeyword.None;
+            if (enemyHPBar != null) enemyHPBar.style.width = new Length(0, LengthUnit.Percent);
         }
 
         if (nodeData.AssignedCreature != null && nodeData.AssignedCreature.Definition != null)
         {
             var creature = nodeData.AssignedCreature;
-            playerInfo.text = $"{creature.Definition.creatureName} Lv. {creature.Level}";
-            playerHP.text = $"HP: {creature.CurrentHealth:F0}/{creature.MaxHealth:F0}";
-            if (creature.Definition.sprite != null)
+            if (playerInfo != null) playerInfo.text = $"{creature.Definition.creatureName} Lv. {creature.Level}";
+            if (playerHP != null) playerHP.text = $"HP: {creature.CurrentHealth:F0}/{creature.MaxHealth:F0}";
+            if (playerImage != null)
             {
-                playerImage.style.display = DisplayStyle.Flex;
-                playerImage.style.backgroundImage = new StyleBackground(creature.Definition.sprite);
+                if (creature.Definition.sprite != null)
+                {
+                    playerImage.style.display = DisplayStyle.Flex;
+                    playerImage.style.backgroundImage = new StyleBackground(creature.Definition.sprite);
+                }
+                else
+                {
+                    playerImage.style.display = DisplayStyle.None;
+                }
             }
-            else
+            if (playerHPBar != null)
             {
-                playerImage.style.display = DisplayStyle.None;
+                float playerHPPercent = creature.CurrentHealth / creature.MaxHealth * 100f;
+                playerHPBar.style.width = new Length(playerHPPercent, LengthUnit.Percent);
             }
-            float playerHPPercent = creature.CurrentHealth / creature.MaxHealth * 100f;
-            playerHPBar.style.width = new Length(playerHPPercent, LengthUnit.Percent);
-            assignCreatureButton.style.display = DisplayStyle.None;
-            removeCreatureButton.style.display = DisplayStyle.Flex;
+
+            if (assignCreatureButton != null) assignCreatureButton.style.display = DisplayStyle.None;
+            if (removeCreatureButton != null) removeCreatureButton.style.display = DisplayStyle.Flex;
         }
         else
         {
-            playerInfo.text = "No creature assigned";
-            playerHP.text = "HP: -/-";
-            playerImage.style.backgroundImage = StyleKeyword.None;
-            playerHPBar.style.width = new Length(0, LengthUnit.Percent);
-            assignCreatureButton.style.display = DisplayStyle.Flex;
-            removeCreatureButton.style.display = DisplayStyle.None;
+            if (playerInfo != null) playerInfo.text = "No creature assigned";
+            if (playerHP != null) playerHP.text = "HP: -/-";
+            if (playerImage != null) playerImage.style.backgroundImage = StyleKeyword.None;
+            if (playerHPBar != null) playerHPBar.style.width = new Length(0, LengthUnit.Percent);
+            if (assignCreatureButton != null) assignCreatureButton.style.display = DisplayStyle.Flex;
+            if (removeCreatureButton != null) removeCreatureButton.style.display = DisplayStyle.None;
         }
     }
 

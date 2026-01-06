@@ -10,6 +10,7 @@
                 <ui:Label text="Production" name="ProductionLabel" class="section-label" />
                 <ui:VisualElement name="ProductionList" />
             </ui:VisualElement>
+            <ui:Button text="Upgrade" name="UpgradeButton" class="buy-button" style="margin-top: 10px; background-color: #555555; align-self: center; width: 60%;" />
         </ui:VisualElement>
         
         <ui:VisualElement name="BattleContent" class="tab-content" style="display: none;">

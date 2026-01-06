@@ -17,3 +17,6 @@ MonoBehaviour:
   productionItems:
   - item: {fileID: 11400000, guid: 3682a546f509edc49ac3fdfaeaf3a6cb, type: 2}
     baseAmount: 1
+  possibleCreatures:
+  - {fileID: 11400000, guid: bc1600b17449119428d20c5997f768e3, type: 2}
+  - {fileID: 11400000, guid: 0e44170abd172ea44a5dbc39cfad33f0, type: 2}

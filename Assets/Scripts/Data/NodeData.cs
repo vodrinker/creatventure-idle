@@ -15,7 +15,7 @@ public class NodeData
     public int adventureLevel { get; set; }
 
     public float baseCost { get; set; }
-    public int UpgradeCost => (int)((Mathf.Pow(productionLevel, 2) + 1) * baseCost);
+    public int UpgradeCost => (int)(baseCost * Mathf.Pow(1.2f, productionLevel));
 
     public List<NodeProductionProgress> productionProgresses;
     public List<CreatureSO> PossibleCreatures { get; private set; }
@@ -37,7 +37,7 @@ public class NodeData
         NodeName = definition.nodeName;
         NodeSprite = definition.nodeSprite;
 
-        productionLevel = 1;
+        productionLevel = 0;
         adventureLevel = 0;
 
         productionProgresses = new List<NodeProductionProgress>();

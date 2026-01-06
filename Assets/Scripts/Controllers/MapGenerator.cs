@@ -34,7 +34,7 @@ public class MapGenerator
                 var newNode = new NodeData(coordinates, definition);
 
                 int distance = Mathf.Max(Mathf.Abs(x), Mathf.Abs(y));
-                newNode.baseCost = distance * 100;
+                newNode.baseCost = (distance == 0 ? 1 : distance) * 100;
 
                 mapData.Add(coordinates, newNode);
             }

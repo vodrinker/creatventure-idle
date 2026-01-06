@@ -15,5 +15,5 @@ MonoBehaviour:
   sprite: {fileID: 0}
   creatureName: strong
   type: {fileID: 11400000, guid: 0fd275603e018bc478b18a49b4c20cf8, type: 2}
-  baseHealth: 6
-  baseAttack: 6
+  baseHealth: 33
+  baseAttack: 3
