@@ -139,6 +139,12 @@ public class GameManager : MonoBehaviour
     {
         foreach (var node in Map.Values.Where(n => n.isOwned))
         {
+            if (node.Enemy != null && !node.Enemy.IsAlive)
+            {
+                HandleEnemyDeath(node);
+                continue;
+            }
+
             if (node.AssignedCreature == null) continue;
 
             if (node.IsHealing)
@@ -156,12 +162,6 @@ public class GameManager : MonoBehaviour
             if (node.Enemy == null)
             {
                 SpawnEnemyForNode(node);
-                continue;
-            }
-
-            if (!node.Enemy.IsAlive)
-            {
-                HandleEnemyDeath(node);
                 continue;
             }
 
@@ -258,13 +258,15 @@ public class GameManager : MonoBehaviour
             node.isOwned = true;
             node.isVisible = true;
 
-            // Reveal neighbors
-            int x = node.Coordinates.x;
-            int y = node.Coordinates.y;
-            UnlockNeighborVisibility(new Vector2Int(x + 1, y));
-            UnlockNeighborVisibility(new Vector2Int(x - 1, y));
-            UnlockNeighborVisibility(new Vector2Int(x, y + 1));
-            UnlockNeighborVisibility(new Vector2Int(x, y - 1));
+            // Reveal neighbors (including diagonals)
+            for (int nx = node.Coordinates.x - 1; nx <= node.Coordinates.x + 1; nx++)
+            {
+                for (int ny = node.Coordinates.y - 1; ny <= node.Coordinates.y + 1; ny++)
+                {
+                    if (nx == node.Coordinates.x && ny == node.Coordinates.y) continue;
+                    UnlockNeighborVisibility(new Vector2Int(nx, ny));
+                }
+            }
 
             SpawnEnemyForNode(node);
 
@@ -746,6 +748,7 @@ public class GameManager : MonoBehaviour
                 }
             }
             node.IsHealing = true;
+            node.Enemy = null; // Clear dead enemy to prevent re-processing
         }
         else
         {

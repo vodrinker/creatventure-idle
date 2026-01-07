@@ -42,4 +42,21 @@ public static class NumberFormatter
     {
         return Format((double)value);
     }
+
+    /// <summary>
+    /// Formats numbers to always be integers for small values (checking user request for HP).
+    /// </summary>
+    public static string FormatNoDecimals(double value)
+    {
+        if (value < 1000)
+        {
+            return Math.Floor(value).ToString("F0");
+        }
+        return Format(value);
+    }
+
+    public static string FormatNoDecimals(long value)
+    {
+        return FormatNoDecimals((double)value);
+    }
 }

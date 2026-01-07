@@ -23,7 +23,8 @@ public static class GameBalance
     {
         if (targetLevel <= 1) return 0;
         float exp = 100f; // BaseLevelExp
-        for (int i = 1; i < targetLevel; i++)
+        // Start from 2 because level 2 requires base exp (100), level 3 requires base * multiplier
+        for (int i = 2; i < targetLevel; i++)
         {
             exp *= 1.3f; // LevelExpMultiplier
         }

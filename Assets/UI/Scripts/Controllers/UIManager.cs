@@ -657,7 +657,7 @@ public class UIManager : MonoBehaviour
         if (nodeData.Enemy != null && nodeData.Enemy.Definition != null)
         {
             if (enemyInfo != null) enemyInfo.text = $"{nodeData.Enemy.Definition.creatureName} Lv. {nodeData.Enemy.Level}";
-            if (enemyHP != null) enemyHP.text = $"HP: {NumberFormatter.Format(nodeData.Enemy.CurrentHealth)}/{NumberFormatter.Format(nodeData.Enemy.MaxHealth)}";
+            if (enemyHP != null) enemyHP.text = $"HP: {NumberFormatter.FormatNoDecimals(nodeData.Enemy.CurrentHealth)}/{NumberFormatter.FormatNoDecimals(nodeData.Enemy.MaxHealth)}";
             if (enemyImage != null)
             {
                 if (nodeData.Enemy.Definition.sprite != null)
@@ -690,7 +690,7 @@ public class UIManager : MonoBehaviour
             if (playerInfo != null) playerInfo.text = $"{creature.Definition.creatureName} Lv. {creature.Level}";
             if (playerHP != null)
             {
-                playerHP.text = $"HP: {NumberFormatter.Format(creature.CurrentHealth)}/{NumberFormatter.Format(creature.MaxHealth)}";
+                playerHP.text = $"HP: {NumberFormatter.FormatNoDecimals(creature.CurrentHealth)}/{NumberFormatter.FormatNoDecimals(creature.MaxHealth)}";
                 playerHP.style.display = DisplayStyle.Flex;
             }
             if (playerImage != null)
