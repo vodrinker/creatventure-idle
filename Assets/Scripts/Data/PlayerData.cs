@@ -6,11 +6,16 @@ public class PlayerData
     public Dictionary<ItemSO, int> Items { get; private set; }
     public List<Creature> Creatures { get; private set; }
 
+    public int Traps { get; set; }
+    public List<Creature> CatchableCreatures { get; private set; }
+
     public PlayerData()
     {
         Money = 0;
+        Traps = 1; // Default starting trap
         Items = new Dictionary<ItemSO, int>();
         Creatures = new List<Creature>();
+        CatchableCreatures = new List<Creature>();
     }
 
     public void AddItem(ItemSO item, int amount)

@@ -1,23 +1,38 @@
 .creatures-view-root {
     flex-grow: 1;
-    padding: 10px;
+    padding: 6px;
     background-color: rgba(30, 30, 40, 0.95);
 }
 
-.view-title {
-    font-size: 24px;
-    color: #FFD700;
-    -unity-font-style: bold;
-    margin-bottom: 15px;
-    padding: 10px;
-    border-bottom-width: 2px;
-    border-bottom-color: #FFD700;
-    -unity-text-align: middle-center;
+.view-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
 }
 
-.creatures-list {
-    flex-grow: 1;
-    background-color: transparent;
+.view-title {
+    font-size: 18px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+}
+
+.traps-label {
+    font-size: 16px;
+    color: #FFAA00; /* Orange-ish for Traps */
+    -unity-font-style: bold;
+}
+
+.tab-container {
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 8px;
+}
+
+/* Tab buttons use .menu-btn from GlobalStyles, but we can override specific margins */
+.tab-container .menu-btn {
+    width: 45%;
+    margin: 0 4px;
 }
 
 .creatures-scroll-view {
@@ -25,374 +40,95 @@
 }
 
 .creatures-container {
-    flex-direction: column;
-    padding: 0;
-}
-
-.creature-list-item {
     flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    padding: 5px 10px;
-    margin: 1px 0;
-    background-color: rgba(60, 60, 80, 0.8);
-    border-width: 0;
-    border-radius: 0;
-    width: 100%;
+    flex-wrap: wrap;
+    justify-content: space-around;
 }
 
-.creature-list-item:hover {
-    background-color: rgba(80, 80, 110, 0.9);
-    border-color: rgba(255, 215, 0, 0.7);
-}
-
-.creature-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 15px;
-    background-color: rgba(40, 40, 50, 0.8);
-    border-radius: 4px;
-    border-width: 1px;
-    border-color: #FFD700;
-}
-
-.creature-info {
-    flex-grow: 0;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-}
-
-.creature-name {
-    font-size: 16px;
-    color: #FFFFFF;
-    -unity-font-style: bold;
-    margin: 0;
-    padding: 0;
-    margin-right: 10px;
-    -unity-text-align: middle-left;
-}
-
-.creature-level {
-    font-size: 14px;
-    color: #AAAAAA;
-    margin: 0;
-    padding: 0;
-    -unity-text-align: middle-left;
-}
-
-.creature-picker-popup {
-    max-height: 400px;
-    min-width: 300px;
-}
-
-.creature-picker-scroll {
+/* Wild Table Styles */
+.wild-container {
     flex-grow: 1;
-    max-height: 300px;
+    margin-top: 5px;
 }
 
-.creature-picker-list {
-    flex-direction: column;
-    padding: 5px;
-}
-
-.node-production-section {
-    margin-top: 10px;
-    padding: 8px;
-    background-color: rgba(40, 40, 50, 0.6);
-    border-radius: 6px;
-}
-
-.production-item-row {
+.wild-table-header {
     flex-direction: row;
-    align-items: center;
-    margin: 4px 0;
-}
-
-.production-item-name {
-    flex-grow: 1;
-    font-size: 14px;
-    color: #DDDDDD;
-}
-
-.production-rate {
-    font-size: 12px;
-    color: #AAAAAA;
-    margin-left: 10px;
-}
-
-.progress-bar-container {
-    width: 100px;
-    height: 12px;
-    background-color: #3D3215;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-left: 10px;
-    flex-shrink: 0;
-}
-
-
-.progress-bar-fill {
-    height: 100%;
-    min-height: 100%;
-    background-color: #FFD700;
-    border-radius: 4px;
-    /* transition removed to prevent rewind effect on loop */
-}
-
-.node-creature-section {
-    margin-top: 10px;
-    padding: 8px;
-    background-color: rgba(40, 40, 50, 0.6);
-    border-radius: 6px;
-    flex-direction: row;
-    align-items: center;
-}
-
-.assigned-creature-icon {
-    width: 48px;
-    height: 48px;
-    margin-right: 10px;
-    background-color: rgba(60, 60, 80, 0.8);
-    border-radius: 6px;
-    border-width: 1px;
-    border-color: #FFD700;
-}
-
-.assigned-creature-name {
-    flex-grow: 1;
-    font-size: 14px;
-    color: #FFFFFF;
-}
-
-.remove-creature-button {
-    padding: 5px 10px;
-    background-color: #AA3333;
-    color: #FFFFFF;
-    border-radius: 4px;
-}
-
-.remove-creature-button:hover {
-    background-color: #CC4444;
-}
-
-.assign-creature-button {
-    padding: 8px 15px;
-    background-color: #3D6B3D;
-    color: #FFFFFF;
-    border-radius: 4px;
-    margin-top: 10px;
-}
-
-.assign-creature-button:hover {
-    background-color: #4D8B4D;
-}
-
-.possible-creatures-section {
-    margin-top: 10px;
-    padding: 8px;
-    background-color: rgba(40, 40, 50, 0.6);
-    border-radius: 6px;
-}
-
-.section-label {
-    font-size: 12px;
-    color: #888888;
-    margin-bottom: 5px;
-}
-
-.possible-creature-row {
-    flex-direction: row;
-    align-items: center;
-    margin: 3px 0;
-}
-
-.possible-creature-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-}
-
-.possible-creature-name {
-    font-size: 12px;
-    color: #CCCCCC;
-}
-
-.tab-bar {
-    flex-direction: row;
-    margin: 10px 0;
-    padding: 0 5px;
-}
-
-.tab-button {
-    flex-grow: 1;
-    padding: 8px 15px;
-    margin: 0 2px;
-    background-color: rgba(60, 60, 80, 0.6);
-    color: #888888;
-    border-radius: 6px 6px 0 0;
-    border-width: 0;
-}
-
-.tab-button:hover {
-    background-color: rgba(80, 80, 100, 0.8);
-    color: #AAAAAA;
-}
-
-.tab-active {
-    background-color: rgba(80, 80, 110, 0.9);
-    color: #FFD700;
+    background-color: rgba(50, 50, 70, 0.9);
+    padding: 8px 2px;
     border-bottom-width: 2px;
-    border-bottom-color: #FFD700;
+    border-bottom-color: #FFAA00;
 }
 
-.tab-content {
-    flex-grow: 1;
-    padding: 10px;
-    background-color: rgba(40, 40, 50, 0.6);
-    border-radius: 0 0 6px 6px;
-}
-
-.battle-section {
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 8px;
-    align-items: center;
-}
-
-.enemy-section {
-    background-color: rgba(120, 50, 50, 0.4);
-    border-width: 1px;
-    border-color: rgba(180, 80, 80, 0.5);
-}
-
-.player-section {
-    background-color: rgba(50, 100, 50, 0.4);
-    border-width: 1px;
-    border-color: rgba(80, 150, 80, 0.5);
-}
-
-.enemy-label {
-    color: #CC6666;
-}
-
-.player-label {
-    color: #66CC66;
-}
-
-.creature-battle-info {
-    font-size: 16px;
+.header-cell {
+    color: #FFAA00;
     -unity-font-style: bold;
-    margin: 5px 0;
-}
-
-.enemy-info {
-    color: #FFAAAA;
-}
-
-.player-info {
-    color: #AAFFAA;
-}
-
-.creature-hp {
-    font-size: 14px;
-    margin-bottom: 8px;
-}
-
-.enemy-hp {
-    color: #FF8888;
-}
-
-.player-hp {
-    color: #88FF88;
-}
-
-.battle-creature-image {
-    width: 80px;
-    height: 80px;
-    background-color: rgba(30, 30, 40, 0.8);
-    border-radius: 8px;
-    border-width: 2px;
-    border-color: rgba(255, 215, 0, 0.5);
-}
-
-.vs-label {
-    font-size: 20px;
-    color: #FFD700;
-    -unity-font-style: bold;
+    font-size: 12px;
     -unity-text-align: middle-center;
-    margin: 10px 0;
 }
 
-.hp-bar-container {
-    width: 120px;
-    height: 10px;
-    background-color: rgba(30, 30, 30, 0.8);
-    border-radius: 5px;
-    overflow: hidden;
-    margin: 5px 0;
-    flex-shrink: 0;
+.col-name {
+    flex-grow: 1;
+    -unity-text-align: middle-left;
+    padding-left: 5px;
 }
 
-.battle-hp-fill {
-    height: 100%;
-    border-radius: 5px;
-    transition: width 0.2s;
+.col-level {
+    width: 60px;
 }
 
-.enemy-hp-bar {
-    background-color: #CC4444; 
+.col-catch {
+    width: 80px;
 }
 
-.player-hp-bar {
-    background-color: #44CC44;
+.wild-list {
+    flex-grow: 1;
 }
 
-.progress-section {
-    margin-top: 10px;
-    padding: 10px;
-    background-color: rgba(40, 40, 50, 0.6);
-    border-radius: 6px;
-    align-items: center;
-}
-
-.progress-label {
-    font-size: 14px;
-    color: #FFD700;
-    margin-bottom: 8px;
-    -unity-font-style: bold;
-}
-
-.level-controls {
+.wild-row {
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    padding: 6px 2px;
+    background-color: rgba(40, 40, 55, 0.7);
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(100, 100, 120, 0.5);
+    height: 40px;
 }
 
-.level-button {
-    width: 30px;
-    height: 30px;
-    font-size: 18px;
-    -unity-font-style: bold;
+.wild-row:hover {
     background-color: rgba(60, 60, 80, 0.8);
+}
+
+.row-name {
+    flex-grow: 1;
+    color: #FFFFFF;
+    font-size: 14px;
+    -unity-text-align: middle-left;
+    padding-left: 5px;
+}
+
+.row-level {
+    width: 60px;
+    color: #AAAAAA;
+    font-size: 14px;
+    -unity-text-align: middle-center;
+}
+
+.catch-btn {
+    width: 70px;
+    height: 28px;
+    background-color: rgba(50, 150, 50, 0.8);
     color: #FFFFFF;
     border-radius: 4px;
     border-width: 0;
-    margin: 0 10px;
-}
-
-.level-button:hover {
-    background-color: rgba(80, 80, 100, 0.9);
-}
-
-.level-button:disabled {
-    background-color: rgba(40, 40, 40, 0.5);
-    color: #666666;
-}
-
-.level-display {
-    font-size: 16px;
-    color: #FFFFFF;
+    font-size: 12px;
     -unity-font-style: bold;
-    margin: 0 5px;
+}
+
+.catch-btn:hover {
+    background-color: rgba(70, 180, 70, 0.9);
+}
+
+.catch-btn:disabled {
+    background-color: rgba(50, 50, 50, 0.5);
+    color: #888888;
 }

@@ -13,21 +13,21 @@ public class TechnologyEditorWindow : EditorWindow
     private const float NodeSize = 40f;
     private float zoom = 1.0f;
 
-    private List<TechnologySO> currentNodes = new List<TechnologySO>();
+    private List<BaseTechSO> currentNodes = new List<BaseTechSO>();
 
     // Interaction state
-    private TechnologySO connectionStartNode = null;
+    private BaseTechSO connectionStartNode = null;
     private bool isDraggingConnection = false;
 
     // Node Dragging
-    private TechnologySO draggedNode = null;
+    private BaseTechSO draggedNode = null;
     private bool isDraggingNode = false;
     private Vector2 nodeDragOffset; // Offset from node center to mouse click point
     private Vector2 dragStartPos;   // Screen position where mouse went down
 
     // Connection selection
-    private TechnologySO selectedConnectionSource = null;
-    private TechnologySO selectedConnectionTarget = null;
+    private BaseTechSO selectedConnectionSource = null;
+    private BaseTechSO selectedConnectionTarget = null;
 
     // Creation popup state
     private bool showCreationPopup = false;
@@ -36,12 +36,17 @@ public class TechnologyEditorWindow : EditorWindow
     private Rect creationPopupRect;
 
     // Node popup state
-    private TechnologySO popupNode = null;
+    private BaseTechSO popupNode = null;
     private Rect nodePopupRect;
 
     // Node value buffers
     private string tempName = "";
     private string tempDescription = "";
+
+    // Meta Upgrade specific buffers
+    private int tempMaxLevels;
+    private int tempBaseCost;
+    private float tempCostMultiplier;
 
     [MenuItem("Tools/Technology Manager")]
     public static void ShowWindow()
@@ -63,7 +68,7 @@ public class TechnologyEditorWindow : EditorWindow
     {
         string path = currentTab == TechTab.Game ? "Technologies/Game" : "Technologies/Meta";
         currentNodes.Clear();
-        var loaded = Resources.LoadAll<TechnologySO>(path);
+        var loaded = Resources.LoadAll<BaseTechSO>(path);
         currentNodes.AddRange(loaded);
     }
 
@@ -320,7 +325,7 @@ public class TechnologyEditorWindow : EditorWindow
             if (e.alt || e.button == 2) return;
 
             // PRE-CALCULATE HIT NODE
-            TechnologySO clickedNode = null;
+            BaseTechSO clickedNode = null;
             float hitRadius = (NodeSize * zoom) / 2f;
             foreach (var node in currentNodes)
             {
@@ -369,6 +374,13 @@ public class TechnologyEditorWindow : EditorWindow
                         GUI.FocusControl(null); // Clear focus to prevent old value retention
                         tempName = popupNode.displayName;
                         tempDescription = popupNode.description;
+
+                        if (popupNode is MetaUpgradeSO metaNode)
+                        {
+                            tempMaxLevels = metaNode.maxLevels;
+                            tempBaseCost = metaNode.baseCost;
+                            tempCostMultiplier = metaNode.costMultiplier;
+                        }
                     }
 
                     // PREPARE DRAG (Don't start yet)
@@ -503,7 +515,7 @@ public class TechnologyEditorWindow : EditorWindow
             if (isDraggingConnection && e.button == 1)
             {
                 isDraggingConnection = false;
-                TechnologySO dropNode = null;
+                BaseTechSO dropNode = null;
                 float hitRadius = (NodeSize * zoom) / 2f;
                 foreach (var node in currentNodes)
                 {
@@ -578,10 +590,11 @@ public class TechnologyEditorWindow : EditorWindow
         {
             showCreationPopup = false;
         }
-        if (GUILayout.Button("Create") || (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Return))
+        if (GUILayout.Button("Create") || (Event.current.isKey && Event.current.keyCode == KeyCode.Return))
         {
             CreateNode(newTechName, creationGridPos);
             showCreationPopup = false;
+            Event.current.Use();
         }
         GUILayout.EndHorizontal();
 
@@ -601,7 +614,11 @@ public class TechnologyEditorWindow : EditorWindow
         float padding = 10f;
         float baseHeight = 105f; // Header, Name, Label spacing, ID, margins
 
-        float descHeight = EditorStyles.textArea.CalcHeight(new GUIContent(tempDescription), width - padding * 2);
+        // Use custom style for wrapping
+        GUIStyle wrapTextArea = new GUIStyle(EditorStyles.textArea);
+        wrapTextArea.wordWrap = true;
+
+        float descHeight = wrapTextArea.CalcHeight(new GUIContent(tempDescription), width - padding * 2);
         descHeight = Mathf.Max(descHeight, 40f); // Minimum height
 
         nodePopupRect.width = width;
@@ -621,11 +638,12 @@ public class TechnologyEditorWindow : EditorWindow
         EditorGUI.BeginChangeCheck();
 
         GUILayout.Label("Display Name", EditorStyles.miniLabel);
+        // Catch Enter in Name field to Close/Unfocus? Maybe just let it be.
         string newName = EditorGUILayout.TextField(tempName);
 
         GUILayout.Space(5);
         GUILayout.Label("Description", EditorStyles.miniLabel);
-        string newDesc = EditorGUILayout.TextArea(tempDescription, GUILayout.Height(descHeight));
+        string newDesc = EditorGUILayout.TextArea(tempDescription, wrapTextArea, GUILayout.Height(descHeight));
 
         if (EditorGUI.EndChangeCheck())
         {
@@ -636,6 +654,31 @@ public class TechnologyEditorWindow : EditorWindow
             popupNode.displayName = tempName;
             popupNode.description = tempDescription;
             EditorUtility.SetDirty(popupNode);
+        }
+
+        if (popupNode is MetaUpgradeSO metaNode)
+        {
+            GUILayout.Space(10);
+            GUILayout.Label("Meta Upgrade Settings", EditorStyles.boldLabel);
+
+            EditorGUI.BeginChangeCheck();
+
+            int newMaxList = EditorGUILayout.IntField("Max Levels", tempMaxLevels);
+            int newBaseCost = EditorGUILayout.IntField("Base Cost", tempBaseCost);
+            float newMult = EditorGUILayout.FloatField("Cost Mult", tempCostMultiplier);
+
+            if (EditorGUI.EndChangeCheck())
+            {
+                tempMaxLevels = newMaxList;
+                tempBaseCost = newBaseCost;
+                tempCostMultiplier = newMult;
+
+                Undo.RecordObject(metaNode, "Modify Meta Node");
+                metaNode.maxLevels = tempMaxLevels;
+                metaNode.baseCost = tempBaseCost;
+                metaNode.costMultiplier = tempCostMultiplier;
+                EditorUtility.SetDirty(metaNode);
+            }
         }
 
         GUILayout.Space(10);
@@ -669,9 +712,19 @@ public class TechnologyEditorWindow : EditorWindow
             id++;
         }
 
-        TechnologySO newNode = ScriptableObject.CreateInstance<TechnologySO>();
+        BaseTechSO newNode;
+        if (currentTab == TechTab.Game)
+        {
+            newNode = ScriptableObject.CreateInstance<GameTechSO>();
+        }
+        else
+        {
+            newNode = ScriptableObject.CreateInstance<MetaUpgradeSO>();
+        }
+
         newNode.displayName = displayName;
         newNode.position = pos;
+        newNode.name = $"technology_{id}"; // Ensure internal name matches
 
         AssetDatabase.CreateAsset(newNode, $"{folder}/technology_{id}.asset");
         AssetDatabase.SaveAssets();

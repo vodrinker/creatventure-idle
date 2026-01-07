@@ -1,9 +1,37 @@
-<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Styles/GlobalStyles.uss" />
     <Style src="project://database/Assets/UI/Styles/CreaturesView.uss" />
+
     <ui:VisualElement name="CreaturesViewRoot" class="creatures-view-root">
-        <ui:Label text="Creatures" name="ViewTitle" class="view-title" />
-        <ui:ScrollView name="CreaturesScrollView" class="creatures-scroll-view">
-            <ui:VisualElement name="CreaturesContainer" class="creatures-container" />
+        <!-- Header -->
+        <ui:VisualElement class="view-header">
+            <ui:Label text="Creatures" class="view-title" />
+            <ui:Label name="TrapsLabel" text="Traps: 1" class="traps-label" />
+        </ui:VisualElement>
+
+        <!-- Collection Content -->
+        <ui:ScrollView name="CollectionContainer" class="creatures-scroll-view">
+             <!-- Populated by Controller -->
+             <ui:VisualElement name="CreaturesListContent" class="creatures-container" />
         </ui:ScrollView>
+
+        <!-- Wild Content (Starts Hidden) -->
+        <ui:VisualElement name="WildContainer" class="wild-container" style="display: none;">
+            <ui:VisualElement class="wild-table-header">
+                <ui:Label text="Creature" class="header-cell col-name" />
+                <ui:Label text="Level" class="header-cell col-level" />
+                <ui:Label text="Action" class="header-cell col-catch" />
+            </ui:VisualElement>
+            <ui:ScrollView name="WildList" class="wild-list">
+                 <!-- Populated by Controller -->
+            </ui:ScrollView>
+        </ui:VisualElement>
+
+        <!-- Tabs (Bottom) -->
+        <ui:VisualElement name="TabContainer" class="tab-container">
+            <ui:Button name="TabCollection" text="Collection" class="menu-btn selected" />
+            <ui:Button name="TabWild" text="Wild (Catch)" class="menu-btn" />
+        </ui:VisualElement>
+
     </ui:VisualElement>
 </ui:UXML>

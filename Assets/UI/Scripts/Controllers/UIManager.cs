@@ -20,6 +20,8 @@ public class UIManager : MonoBehaviour
 
     private VisualTreeAsset mapViewAsset;
     private VisualTreeAsset mapTilePopupAsset;
+    private VisualTreeAsset techTreeViewAsset;
+    private VisualTreeAsset techNodePopupAsset;
     private VisualTreeAsset itemsViewAsset;
     private VisualTreeAsset itemListElementAsset;
     private VisualTreeAsset creaturesViewAsset;
@@ -28,6 +30,9 @@ public class UIManager : MonoBehaviour
 
     private ListView creaturesListView;
     private MapView currentMapView;
+
+    private TechTreeViewController currentTechViewController;
+    private CreaturesViewController currentCreaturesViewController;
 
     // Flash feedback tracking
     private Dictionary<VisualElement, Coroutine> activeFlashes = new Dictionary<VisualElement, Coroutine>();
@@ -77,10 +82,19 @@ public class UIManager : MonoBehaviour
             RefreshItemsView();
         }
 
-        if (creaturesListView != null && creaturesListView.parent != null)
+        if (currentTechViewController != null)
         {
-            creaturesListView.itemsSource = gameManager.Player.Creatures;
-            creaturesListView.Rebuild();
+            currentTechViewController.UpdateUI();
+        }
+
+        if (currentTechViewController != null)
+        {
+            currentTechViewController.UpdateUI();
+        }
+
+        if (currentCreaturesViewController != null)
+        {
+            currentCreaturesViewController.UpdateUI();
         }
     }
 
@@ -121,12 +135,31 @@ public class UIManager : MonoBehaviour
     private void LoadAssets()
     {
         mapViewAsset = Resources.Load<VisualTreeAsset>("MapView");
+        techTreeViewAsset = Resources.Load<VisualTreeAsset>("TechTreeView");
+        techNodePopupAsset = Resources.Load<VisualTreeAsset>("TechNodePopup");
         mapTilePopupAsset = Resources.Load<VisualTreeAsset>("MapTilePopup");
         itemsViewAsset = Resources.Load<VisualTreeAsset>("ItemsView");
         itemListElementAsset = Resources.Load<VisualTreeAsset>("ItemListElement");
         creaturesViewAsset = Resources.Load<VisualTreeAsset>("CreaturesView");
         creatureListElementAsset = Resources.Load<VisualTreeAsset>("CreatureListElement");
         creaturePickerPopupAsset = Resources.Load<VisualTreeAsset>("CreaturePickerPopup");
+    }
+
+    private void UpdateMenuSelection(Button selectedBtn)
+    {
+        var buttons = new[] { mapButton, techTreeButton, itemsButton, creaturesButton };
+        foreach (var btn in buttons)
+        {
+            if (btn == null) continue;
+            btn.RemoveFromClassList("selected");
+            // Ensure button is enabled to avoid default disabled graying
+            btn.SetEnabled(true);
+        }
+
+        if (selectedBtn != null)
+        {
+            selectedBtn.AddToClassList("selected");
+        }
     }
 
     private void CloseAllPopups()
@@ -141,9 +174,17 @@ public class UIManager : MonoBehaviour
 
     private void ShowMapView()
     {
+        UpdateMenuSelection(mapButton);
         CloseAllPopups();
         contentContainer.Clear();
         if (currentMapView != null) currentMapView.UnregisterCallbacks();
+        currentMapView = null;
+        if (currentTechViewController != null) currentTechViewController.UnregisterCallbacks();
+        currentTechViewController = null;
+        creaturesListView = null;
+
+        if (currentCreaturesViewController != null) currentCreaturesViewController.UnregisterCallbacks();
+        currentCreaturesViewController = null;
         creaturesListView = null;
         isShowingItemsView = false;
         var mapViewInstance = mapViewAsset.CloneTree();
@@ -153,12 +194,23 @@ public class UIManager : MonoBehaviour
 
     private void ShowTechTreeView()
     {
+        UpdateMenuSelection(techTreeButton);
         CloseAllPopups();
         contentContainer.Clear();
         if (currentMapView != null) currentMapView.UnregisterCallbacks();
         currentMapView = null;
+        if (currentTechViewController != null) currentTechViewController.UnregisterCallbacks();
+        currentTechViewController = null;
         creaturesListView = null;
+        if (currentCreaturesViewController != null) currentCreaturesViewController.UnregisterCallbacks();
+        currentCreaturesViewController = null;
+
         isShowingItemsView = false;
+
+        var techViewInstance = techTreeViewAsset.CloneTree();
+        techViewInstance.style.flexGrow = 1;
+        contentContainer.Add(techViewInstance);
+        currentTechViewController = new TechTreeViewController(techViewInstance, this);
     }
 
     private void RefreshItemsView()
@@ -251,11 +303,16 @@ public class UIManager : MonoBehaviour
     private void ShowItemsView()
     {
         if (gameManager == null) return;
-
+        UpdateMenuSelection(itemsButton);
         CloseAllPopups();
         contentContainer.Clear();
         if (currentMapView != null) currentMapView.UnregisterCallbacks();
         currentMapView = null;
+        if (currentTechViewController != null) currentTechViewController.UnregisterCallbacks();
+        currentTechViewController = null;
+
+        if (currentCreaturesViewController != null) currentCreaturesViewController.UnregisterCallbacks();
+        currentCreaturesViewController = null;
         isShowingItemsView = true;
         itemRowCache.Clear();
 
@@ -294,41 +351,23 @@ public class UIManager : MonoBehaviour
     private void ShowCreaturesView()
     {
         if (gameManager == null) return;
-
+        UpdateMenuSelection(creaturesButton);
         CloseAllPopups();
         contentContainer.Clear();
         if (currentMapView != null) currentMapView.UnregisterCallbacks();
         currentMapView = null;
+        if (currentTechViewController != null) currentTechViewController.UnregisterCallbacks();
+        currentTechViewController = null;
+        if (currentCreaturesViewController != null) currentCreaturesViewController.UnregisterCallbacks();
+        currentCreaturesViewController = null;
         creaturesListView = null;
         isShowingItemsView = false;
 
         var creaturesViewInstance = creaturesViewAsset.CloneTree();
-        var creaturesContainer = creaturesViewInstance.Q<VisualElement>("CreaturesContainer");
-
-        foreach (var creature in gameManager.Player.Creatures)
-        {
-            var element = creatureListElementAsset.CloneTree();
-            var listItem = element.Q<VisualElement>("CreatureListItem");
-            if (listItem != null)
-            {
-                listItem.AddToClassList("creature-list-item");
-            }
-
-            var iconElement = element.Q<VisualElement>("CreatureIcon");
-            var nameLabel = element.Q<Label>("CreatureName");
-            var levelLabel = element.Q<Label>("CreatureLevel");
-
-            if (creature.Definition != null && creature.Definition.sprite != null)
-            {
-                iconElement.style.backgroundImage = new StyleBackground(creature.Definition.sprite);
-            }
-            nameLabel.text = creature.Definition != null ? creature.Definition.creatureName : "Unknown";
-            levelLabel.text = $"Lv. {creature.Level}";
-
-            creaturesContainer.Add(element);
-        }
-
+        creaturesViewInstance.style.flexGrow = 1;
         contentContainer.Add(creaturesViewInstance);
+
+        currentCreaturesViewController = new CreaturesViewController(creaturesViewInstance, gameManager);
     }
 
     public void OpenMapTilePopup(NodeData nodeData)
@@ -780,6 +819,89 @@ public class UIManager : MonoBehaviour
         popupHost.Add(popupInstance);
 
         popupInstance.schedule.Execute(() => onPopupOpened?.Invoke(popupInstance));
+    }
+
+    public void OpenTechNodePopup(BaseTechSO nodeData, Action onActionCompleted)
+    {
+        OpenPopup(techNodePopupAsset, (popupInstance) =>
+        {
+            var titleLabel = popupInstance.Q<Label>("node-title");
+            var descLabel = popupInstance.Q<Label>("node-desc");
+            var costContainer = popupInstance.Q<VisualElement>("cost-container");
+            var costLabel = popupInstance.Q<Label>("node-cost");
+            var actionBtn = popupInstance.Q<Button>("action-btn");
+
+            if (titleLabel != null) titleLabel.text = nodeData.displayName;
+            if (descLabel != null) descLabel.text = nodeData.description;
+
+            // Logic to update state
+            void UpdateState()
+            {
+                if (nodeData is GameTechSO gTech)
+                {
+                    bool unlocked = TechManager.Instance.IsUnlocked(gTech.name);
+                    bool canUnlock = TechManager.Instance.CanUnlock(gTech);
+
+                    if (unlocked)
+                    {
+                        if (costLabel != null) costLabel.text = "Owned";
+                        if (actionBtn != null)
+                        {
+                            actionBtn.text = "Unlocked";
+                            actionBtn.SetEnabled(false);
+                        }
+                    }
+                    else
+                    {
+                        if (costLabel != null) costLabel.text = "1 TP";
+                        if (actionBtn != null)
+                        {
+                            actionBtn.text = "Research";
+                            actionBtn.SetEnabled(canUnlock);
+                        }
+                    }
+                }
+                else if (nodeData is MetaUpgradeSO mTech)
+                {
+                    int level = MetaProgressionManager.Instance.GetLevel(mTech.name);
+                    if (level >= mTech.maxLevels)
+                    {
+                        if (costLabel != null) costLabel.text = "MAX";
+                        if (actionBtn != null)
+                        {
+                            actionBtn.text = "Max Level";
+                            actionBtn.SetEnabled(false);
+                        }
+                    }
+                    else
+                    {
+                        long cost = mTech.GetCostForLevel(level + 1);
+                        if (costLabel != null) costLabel.text = $"{NumberFormatter.Format(cost)} Meta Coins";
+                        if (actionBtn != null)
+                        {
+                            actionBtn.text = "Upgrade";
+                            actionBtn.SetEnabled(MetaProgressionManager.Instance.CanUpgrade(mTech));
+                        }
+                    }
+                }
+            }
+
+            UpdateState();
+
+            if (actionBtn != null)
+            {
+                actionBtn.clicked += () =>
+                {
+                    if (nodeData is GameTechSO gTech)
+                        TechManager.Instance.UnlockTech(gTech);
+                    else if (nodeData is MetaUpgradeSO mTech)
+                        MetaProgressionManager.Instance.UpgradeTech(mTech);
+
+                    UpdateState();
+                    onActionCompleted?.Invoke();
+                };
+            }
+        });
     }
 
     private void CloseCurrentPopup()

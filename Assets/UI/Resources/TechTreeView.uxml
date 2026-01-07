@@ -1,0 +1,21 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/Styles/GlobalStyles.uss?fileID=7433441132597879392&amp;guid=00000000000000000000000000000000&amp;type=3#GlobalStyles"/>
+    <ui:VisualElement name="root" style="flex-grow: 1; background-color: rgb(17, 17, 17);">
+        <ui:VisualElement name="viewport" style="flex-grow: 1; overflow: hidden; background-color: rgb(26, 26, 26);">
+            <ui:VisualElement name="content-container" style="flex-grow: 1;">
+                <ui:VisualElement name="connections-layer" style="position: absolute; top: 0; left: 0; width: 0; height: 0;"/>
+                <ui:VisualElement name="nodes-layer"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="toolbar" style="flex-direction: column; height: auto; background-color: rgb(34, 34, 34); padding: 5px; border-top-width: 1px; border-top-color: rgb(68, 68, 68); justify-content: flex-end;">
+            <ui:VisualElement style="flex-direction: row; height: 30px; min-height: 30px; max-height: 30px; align-items: center; justify-content: center;">
+                <ui:Label name="tech-points-label" text="Tech Points: 0" style="color: white; font-size: 14px; -unity-font-style: bold;"/>
+                <ui:Button name="buy-point-btn" text="Buy ($1000)" style="width: 120px; min-width: 100px; background-color: rgb(42, 138, 42); color: white; border-radius: 4px; font-size: 12px; -unity-font-style: bold; min-height: 25px; max-height: 30px; margin-left: 10px;"/>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-direction: row; height: 35px; min-height: 35px; max-height: 35px; margin-bottom: 5px; justify-content: center;">
+                <ui:Button name="tab-game-btn" text="Research" class="menu-btn menu-btn-compact" style="flex: 1; margin-right: 2px; font-size: 12px; border-radius: 4px;"/>
+                <ui:Button name="tab-meta-btn" text="Meta" class="menu-btn menu-btn-compact" style="flex: 1; margin-left: 2px; font-size: 12px; border-radius: 4px;"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

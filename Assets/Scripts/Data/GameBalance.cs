@@ -129,4 +129,14 @@ public static class GameBalance
         }
         return Mathf.CeilToInt(requiredExp * LevelExpMultiplier);
     }
+
+    // --- Technology Settings ---
+    public const long BaseTechPointCost = 1000;
+    public const float TechPointCostMultiplier = 1.5f;
+
+    public static long CalculateTechPointCost(int ownedPoints)
+    {
+        // Formula: 1000 * 1.5 ^ OwnedPoints
+        return (long)(BaseTechPointCost * System.Math.Pow(TechPointCostMultiplier, ownedPoints));
+    }
 }

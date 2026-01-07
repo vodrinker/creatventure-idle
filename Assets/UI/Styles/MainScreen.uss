@@ -31,8 +31,10 @@
     align-items: center;
 }
 
+
 #MenuContainer > Button {
-    height: 50px;
+    width: 22%; /* Restore fixed width */
+    margin: 2px;
 }
 
 #PopupHost {

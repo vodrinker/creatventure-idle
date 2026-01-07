@@ -1,14 +1,15 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/UI/Styles/MainScreen.uss?fileID=7433441132597879392&amp;guid=5f641c46bcaae9e458bb30a984344d25&amp;type=3#MainScreen"/>
     <Style src="project://database/Assets/UI/Styles/Popups.uss?fileID=7433441132597879392&amp;guid=1765afdcd4cc0bd4588c1b0c3d47f2f2&amp;type=3#Popups"/>
+    <Style src="project://database/Assets/UI/Styles/GlobalStyles.uss?fileID=7433441132597879392&amp;guid=00000000000000000000000000000000&amp;type=3#GlobalStyles"/>
     <ui:VisualElement style="flex-grow: 1; background-color: rgb(3, 0, 36);">
         <ui:VisualElement name="TopBar" style="flex-grow: 1;"/>
         <ui:VisualElement name="ContentContainer" class="content-container" style="flex-grow: 1;"/>
         <ui:VisualElement name="MenuContainer" style="flex-grow: 1; height: 100px; max-height: 50px; flex-direction: row; align-items: center; justify-content: space-around;">
-            <ui:Button text="Techs" name="MenuButton_TechTree"/>
-            <ui:Button text="Map" name="MenuButton_Map"/>
-            <ui:Button text="Creatures" name="MenuButton_Creatures"/>
-            <ui:Button text="Items" name="MenuButton_Items"/>
+            <ui:Button text="Techs" name="MenuButton_TechTree" class="menu-btn"/>
+            <ui:Button text="Map" name="MenuButton_Map" class="menu-btn"/>
+            <ui:Button text="Creatures" name="MenuButton_Creatures" class="menu-btn"/>
+            <ui:Button text="Items" name="MenuButton_Items" class="menu-btn"/>
         </ui:VisualElement>
         <ui:VisualElement name="PopupHost" style="flex-grow: 1;"/>
     </ui:VisualElement>

@@ -1,0 +1,11 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="tech-node-popup" style="width: 95%; max-width: 95%; background-color: rgba(30, 30, 30, 0.95); padding: 20px; border-radius: 8px; border-width: 1px; border-color: rgb(85, 85, 85); align-self: center; margin-top: auto; margin-bottom: auto;">
+        <ui:Label name="node-title" text="Tech Name" style="font-size: 20px; color: white; -unity-font-style: bold; margin-bottom: 15px;"/>
+        <ui:Label name="node-desc" text="Description..." style="color: rgb(204, 204, 204); font-size: 14px; margin-bottom: 20px; white-space: normal; -unity-text-align: middle-left; max-width: 300px;"/>
+        <ui:VisualElement name="cost-container" style="flex-direction: row; margin-bottom: 15px;">
+            <ui:Label text="Cost: " style="color: rgb(170, 170, 170);"/>
+            <ui:Label name="node-cost" text="1 TP" style="color: rgb(68, 255, 68); -unity-font-style: bold;"/>
+        </ui:VisualElement>
+        <ui:Button name="action-btn" text="Unlock" style="height: 45px; background-color: rgb(42, 106, 42); color: white; font-size: 16px; border-radius: 5px;"/>
+    </ui:VisualElement>
+</ui:UXML>

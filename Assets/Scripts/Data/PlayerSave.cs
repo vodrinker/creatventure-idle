@@ -5,6 +5,8 @@ using System.Collections.Generic;
 public class PlayerSave
 {
     public long money;
+    public int traps; // New field
     public List<ItemCount> items;
     public List<CreatureSave> creatures;
+    public List<CreatureSave> catchableCreatures; // New field
 }
