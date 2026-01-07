@@ -1,150 +1,311 @@
 .popup-content {
     background-color: rgb(51, 51, 51);
-    padding: 20px;
+    padding: 15px;
     border-radius: 10px;
     align-items: center;
-    width: 350px;
+    width: 280px;
 }
 
 .popup-image {
-    width: 200px;
-    height: 200px;
+    width: 120px;
+    height: 120px;
     background-color: rgb(85, 85, 85);
     margin-bottom: 10px;
 }
 
 .popup-title {
     -unity-text-align: middle-center;
-    font-size: 24px;
+    font-size: 20px;
     color: white;
     white-space: normal;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .buy-button {
-    margin-top: 15px;
-    height: 40px;
-    width: 150px;
-    background-color: #4CAF50;
-    color: white;
-    -unity-font-style: bold;
-    border-radius: 5px;
-}
-
-/* Tab System */
-.tab-bar {
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-around;
-    margin-top: 15px;
-    border-top-width: 1px;
-    border-top-color: rgba(255, 255, 255, 0.2);
-    padding-top: 10px;
-}
-
-/* Explicitly style the tab buttons to look like buttons */
-.tab-button {
-    flex-grow: 1;
-    margin: 0 5px;
+    margin-top: 10px;
     height: 35px;
-    background-color: #444;
-    color: #AAA;
-    border-width: 1px;
-    border-color: #666;
-    border-radius: 5px;
+    width: 120px;
 }
 
-.tab-button.tab-active {
-    background-color: #666;
-    color: #FFD700;
-    border-color: #FFD700;
-}
+/* --- Styles migrated from CreaturesView.uss (Original) --- */
 
-.tab-content {
+.node-production-section {
+    margin-top: 10px;
+    padding: 8px;
+    background-color: rgba(40, 40, 50, 0.6);
+    border-radius: 6px;
     width: 100%;
+}
+
+.production-item-row {
+    flex-direction: row;
+    align-items: center;
+    margin: 4px 0;
+}
+
+.production-item-name {
+    flex-grow: 1;
+    font-size: 14px;
+    color: #DDDDDD;
+}
+
+.production-rate {
+    font-size: 12px;
+    color: #AAAAAA;
+    margin-left: 10px;
+}
+
+.progress-bar-container {
+    width: 100px;
+    height: 12px;
+    background-color: #3D3215;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    min-height: 100%;
+    background-color: #FFD700;
+    border-radius: 4px;
+}
+
+.node-creature-section {
+    margin-top: 10px;
+    padding: 8px;
+    background-color: rgba(40, 40, 50, 0.6);
+    border-radius: 6px;
+    flex-direction: row;
     align-items: center;
 }
 
-/* Battle Section */
-.battle-section {
+.assigned-creature-icon {
+    width: 48px;
+    height: 48px;
+    margin-right: 10px;
+    background-color: rgba(60, 60, 80, 0.8);
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: #FFD700;
+}
+
+.assigned-creature-name {
+    flex-grow: 1;
+    font-size: 14px;
+    color: #FFFFFF;
+}
+
+.remove-creature-button {
+    padding: 5px 10px;
+    background-color: #AA3333;
+    color: #FFFFFF;
+    border-radius: 4px;
+}
+
+.remove-creature-button:hover {
+    background-color: #CC4444;
+}
+
+.assign-creature-button {
+    padding: 8px 15px;
+    background-color: #3D6B3D;
+    color: #FFFFFF;
+    border-radius: 4px;
+    margin-top: 10px;
     width: 100%;
-    background-color: rgba(0, 0, 0, 0.2);
-    border-radius: 5px;
-    padding: 5px;
+}
+
+.assign-creature-button:hover {
+    background-color: #4D8B4D;
+}
+
+.possible-creatures-section {
+    margin-top: 10px;
+    padding: 8px;
+    background-color: rgba(40, 40, 50, 0.6);
+    border-radius: 6px;
+}
+
+.section-label {
+    font-size: 12px;
+    color: #888888;
     margin-bottom: 5px;
 }
 
-.enemy-section { border-left-width: 3px; border-left-color: #FF4444; }
-.player-section { border-left-width: 3px; border-left-color: #44FF44; }
-
-.section-label {
-    color: #DDD;
-    font-size: 12px;
-    -unity-text-align: middle-center;
-    margin-bottom: 2px;
+.possible-creature-row {
+    flex-direction: row;
+    align-items: center;
+    margin: 3px 0;
 }
+
+.possible-creature-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+.possible-creature-name {
+    font-size: 12px;
+    color: #CCCCCC;
+}
+
+.tab-bar {
+    flex-direction: row;
+    margin: 10px 0;
+    padding: 0 5px;
+    width: 100%;
+}
+
+.tab-button {
+    flex-grow: 1;
+    padding: 8px 15px;
+    margin: 0 2px;
+    background-color: rgba(60, 60, 80, 0.6);
+    color: #888888;
+    border-radius: 6px 6px 0 0;
+    border-width: 0;
+}
+
+.tab-button:hover {
+    background-color: rgba(80, 80, 100, 0.8);
+    color: #AAAAAA;
+}
+
+.tab-active {
+    background-color: rgba(80, 80, 110, 0.9);
+    color: #FFD700;
+    border-bottom-width: 2px;
+    border-bottom-color: #FFD700;
+}
+
+.tab-content {
+    flex-grow: 1;
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.6);
+    border-radius: 0 0 6px 6px;
+    width: 100%;
+}
+
+.battle-section {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 8px;
+    align-items: center;
+    width: 100%;
+}
+
+.enemy-section {
+    background-color: rgba(120, 50, 50, 0.4);
+    border-width: 1px;
+    border-color: rgba(180, 80, 80, 0.5);
+    border-left-width: 3px;
+    border-left-color: #FF4444; 
+}
+
+.player-section {
+    background-color: rgba(50, 100, 50, 0.4);
+    border-width: 1px;
+    border-color: rgba(80, 150, 80, 0.5);
+    border-left-width: 3px;
+    border-left-color: #44FF44;
+}
+
+.enemy-label { color: #CC6666; }
+.player-label { color: #66CC66; }
 
 .creature-battle-info {
-    color: white;
-    font-size: 14px;
-    -unity-text-align: middle-center;
+    font-size: 16px;
     -unity-font-style: bold;
+    margin: 5px 0;
 }
 
+.enemy-info { color: #FFAAAA; }
+.player-info { color: #AAFFAA; }
+
 .creature-hp {
-    color: #AAA;
-    font-size: 12px;
-    -unity-text-align: middle-center;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.enemy-hp { color: #FF8888; }
+.player-hp { color: #88FF88; }
+
+.battle-creature-image {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(30, 30, 40, 0.8);
+    border-radius: 8px;
+    border-width: 2px;
+    border-color: rgba(255, 215, 0, 0.5);
 }
 
 .hp-bar-container {
-    height: 6px;
-    width: 80%;
-    background-color: #222;
-    margin-top: 2px;
-    align-self: center;
-    border-radius: 3px;
+    width: 120px;
+    height: 10px;
+    background-color: rgba(30, 30, 30, 0.8);
+    border-radius: 5px;
     overflow: hidden;
+    margin: 5px 0;
+    flex-shrink: 0;
 }
 
 .battle-hp-fill {
     height: 100%;
-    background-color: #4CAF50;
-}
-.enemy-hp-bar { background-color: #FF4444; }
-
-.battle-creature-image {
-    width: 64px;
-    height: 64px;
-    align-self: center;
-    margin-top: 5px;
+    border-radius: 5px;
+    /* transition: width 0.2s; */
 }
 
-/* Production */
-.node-production-section {
-    width: 100%;
-}
-.production-item-row {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin: 2px 0;
-}
-.production-item-name { color: white; width: 40%; }
-.production-rate { color: #FFD700; width: 30%; -unity-text-align: middle-right; }
-.progress-bar-container { width: 30%; height: 5px; background-color: #333; }
-.progress-bar-fill { height: 100%; background-color: #4CAF50; }
+.enemy-hp-bar { background-color: #CC4444; }
+.player-hp-bar { background-color: #44CC44; }
 
-/* Progress Controls */
 .progress-section {
     margin-top: 10px;
+    padding: 10px;
+    background-color: rgba(40, 40, 50, 0.6);
+    border-radius: 6px;
     align-items: center;
     width: 100%;
-    border-top-width: 1px;
-    border-top-color: rgba(255, 255, 255, 0.1);
-    padding-top: 5px;
 }
-.progress-label { color: #AAA; font-size: 12px; }
-.level-controls { flex-direction: row; align-items: center; margin-top: 5px; }
-.level-button { width: 30px; height: 30px; }
-.level-display { width: 60px; -unity-text-align: middle-center; color: white; font-size: 14px; }
+
+.progress-label {
+    font-size: 14px;
+    color: #FFD700;
+    margin-bottom: 8px;
+    -unity-font-style: bold;
+}
+
+.level-controls {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.level-button {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    -unity-font-style: bold;
+    background-color: rgba(60, 60, 80, 0.8);
+    color: #FFFFFF;
+    border-radius: 4px;
+    border-width: 0;
+    margin: 0 10px;
+}
+
+.level-button:hover {
+    background-color: rgba(80, 80, 100, 0.9);
+}
+
+.level-button:disabled {
+    background-color: rgba(40, 40, 40, 0.5);
+    color: #666666;
+}
+
+.level-display {
+    font-size: 16px;
+    color: #FFFFFF;
+    -unity-font-style: bold;
+    margin: 0 5px;
+}
